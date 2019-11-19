@@ -888,6 +888,11 @@
             Current state of the Activity after the command
             </summary>
         </member>
+        <member name="P:GolemClientMockAPI.Entities.ActivityExecResult.Message">
+            <summary>
+            Message resulting from executing the Activity command
+            </summary>
+        </member>
         <member name="P:GolemClientMockAPI.Entities.ActivityProviderEvent.ExeScript">
             <summary>
             ExeScript batch - relevant for Exec events.
