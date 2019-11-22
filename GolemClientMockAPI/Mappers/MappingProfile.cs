@@ -80,7 +80,7 @@ namespace GolemClientMockAPI.Mappers
                 .ForMember(dest => dest.Index, opt => opt.MapFrom(src => src.ExecResult.Index))
                 .ForMember(dest => dest.Result, opt => opt.MapFrom(src => src.ExecResult.Result))
                 .ForMember(dest => dest.IsBatchFinished, opt => opt.MapFrom(src => src.ExecResult.IsBatchFinished))
-                // .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.ExecResult))  // no result message in respnse structure yet!
+                .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.ExecResult.Message))
                 ;
 
 

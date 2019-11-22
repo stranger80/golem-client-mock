@@ -29,5 +29,10 @@ namespace GolemClientMockAPI.Entities
         /// Current state of the Activity after the command
         /// </summary>
         public ActivityState CurrentState { get; set; }
+
+        /// <summary>
+        /// Message resulting from executing the Activity command
+        /// </summary>
+        public string Message { get; set; }
     }
 }
