@@ -6,15 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GolemClientMockAPI.Security
 {
-    public class GolemClientAuthorizationFilter : Attribute, IActionFilter
+    public class GolemNetHubAuthorizationFilter : Attribute, IActionFilter
     {
-        public GolemClientAuthorizationFilter()
+        public GolemNetHubAuthorizationFilter()
         {
 
         }
@@ -46,14 +45,14 @@ namespace GolemClientMockAPI.Security
                 {
                     var jwt = tokenHandler.ReadJwtToken(token);
 
-                    // Validate token
+                    // Validate the token
 
                     var jwtBuilder = context.HttpContext.RequestServices.GetService(typeof(IJwtBuilder)) as IJwtBuilder;
 
                     var isValid = jwtBuilder.ValidateToken(token, new Dictionary<string, string>()
                         {
                             { "aud", "GolemNetHub" },
-                            { "iss", jwt.Subject }
+                            { "iss", "GolemNetHub" }
                         }, config.PublicKey);
 
 
@@ -76,7 +75,7 @@ namespace GolemClientMockAPI.Security
             }
 
             // if we are here - there was no proper authorization token in request
-            if(this.DefaultNodeId != null)
+            if (this.DefaultNodeId != null)
             {
                 // context.Result = new StatusCodeResult(401); // short circuit to return status 401
 

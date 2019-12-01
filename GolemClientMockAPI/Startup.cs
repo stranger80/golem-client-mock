@@ -26,6 +26,7 @@ using Autofac;
 using GolemClientMockAPI.Modules;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using System.Collections.Generic;
 
 namespace GolemClientMockAPI
 {
@@ -104,6 +105,25 @@ namespace GolemClientMockAPI
                     c.CustomSchemaIds(type => type.FriendlyId(true));
                     c.DescribeAllEnumsAsStrings();
                     c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
+
+                    c.AddSecurityDefinition("Bearer",
+                              new ApiKeyScheme
+                              {
+                                  In = "header",
+                                  Type = "apiKey",
+                                  Description =
+                                      "Bearer Auth protection",
+                                  Name = "Authorization"
+                              });
+
+                    // Swagger 2.+ support
+                    var security = new Dictionary<string, IEnumerable<string>>()
+                    {
+                        {"Bearer", new string[] { }},
+                    };
+
+                    c.AddSecurityRequirement(security);
+
                     // Sets the basePath property in the Swagger document generated
                     //c.DocumentFilter<BasePathFilter>("/market-api/v1");
 

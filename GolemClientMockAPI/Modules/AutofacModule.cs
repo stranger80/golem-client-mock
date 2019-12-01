@@ -2,6 +2,7 @@
 using GolemClientMockAPI.Mappers;
 using GolemClientMockAPI.Processors;
 using GolemClientMockAPI.Repository;
+using GolemClientMockAPI.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,10 @@ namespace GolemClientMockAPI.Modules
                 .As<IActivityRepository>()
                 .SingleInstance();
 
+            builder.RegisterType<InMemoryNetHubProcessor>()
+                .As<INetHubProcessor>()
+                .SingleInstance();
+
             builder.RegisterType<ExeScriptMapper>()
                 .AsSelf()
                 .SingleInstance();
@@ -52,6 +57,14 @@ namespace GolemClientMockAPI.Modules
             builder.RegisterType<InMemoryActivityProcessor>()
                 .As<IRequestorActivityProcessor>()
                 .As<IProviderActivityProcessor>()
+                .SingleInstance();
+
+            builder.RegisterType<ConfigProvider>()
+                .As<IConfigProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<JwtES256Builder>()
+                .As<IJwtBuilder>()
                 .SingleInstance();
         }
     }

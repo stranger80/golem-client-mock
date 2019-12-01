@@ -873,6 +873,37 @@
             </summary>
             <param name="context"></param>
         </member>
+        <member name="M:GolemClientMockAPI.Controllers.GolemNetHubAuthApiController.Authenticate">
+            <summary>
+            Authenticate within the hub
+            </summary>
+            <response code="200">Successful operation</response>
+            <response code="403">Forbidden</response>
+        </member>
+        <member name="M:GolemClientMockAPI.Controllers.GolemNetHubAuthApiController.AuthDelete">
+            <summary>
+            Deactivate the authorization token within the hub
+            </summary>
+            <response code="200">Successful operation</response>
+            <response code="403">Forbidden</response>
+            <response code="405">Invalid input</response>
+        </member>
+        <member name="M:GolemClientMockAPI.Controllers.GolemNetHubMessageApiController.Poll">
+            <summary>
+            Receive a message
+            </summary>
+            <response code="200">Successful operation</response>
+            <response code="403">Forbidden</response>
+        </member>
+        <member name="M:GolemClientMockAPI.Controllers.GolemNetHubMessageApiController.Send(GolemMarketMockAPI.GolemNetHubAPI.Models.Message)">
+            <summary>
+            Send a message
+            </summary>
+            <param name="body">Network message to send</param>
+            <response code="200">Successful operation</response>
+            <response code="403">Forbidden</response>
+            <response code="405">Invalid input</response>
+        </member>
         <member name="P:GolemClientMockAPI.Entities.ActivityExecResult.Index">
             <summary>
             Index of command for which this is the result
@@ -987,6 +1018,19 @@
             Dictionary of blocking queues of AgreementResultEnum, indexed by Agreement Id. 
             These are used to message the responses to ConfirmAgreement calls.
             </summary>
+        </member>
+        <member name="P:GolemClientMockAPI.Processors.InMemoryNetHubProcessor.NodeDescriptorsByNodeIds">
+            <summary>
+            Dictionary of NodeDescriptors indexed by NodeIds
+            </summary>
+        </member>
+        <member name="M:GolemClientMockAPI.Processors.InMemoryNetHubProcessor.GetAddressRouting(System.String)">
+            <summary>
+            Resolve all destination nodes based on destination address.
+            NOTE: This would also include multicasting logic, if required.
+            </summary>
+            <param name="destinationAddress"></param>
+            <returns></returns>
         </member>
         <member name="M:GolemClientMockAPI.Processors.IRequestorActivityProcessor.CreateActivity(System.String)">
             <summary>
@@ -1200,6 +1244,21 @@
             </summary>
             <param name="subscriptionId"></param>
             <returns></returns>
+        </member>
+        <member name="T:GolemClientMockAPI.Security.BearerAuthenticationHandler">
+            <summary>
+            class to handle bearer authentication.
+            </summary>
+        </member>
+        <member name="F:GolemClientMockAPI.Security.BearerAuthenticationHandler.SchemeName">
+            <summary>
+            scheme name for authentication handler.
+            </summary>
+        </member>
+        <member name="M:GolemClientMockAPI.Security.BearerAuthenticationHandler.HandleAuthenticateAsync">
+            <summary>
+            verify that require authorization header exists.
+            </summary>
         </member>
         <member name="T:GolemClientMockAPI.Startup">
             <summary>
@@ -1551,6 +1610,97 @@
             </summary>
             <param name="operation">Operation</param>
             <param name="context">OperationFilterContext</param>
+        </member>
+        <member name="T:GolemMarketMockAPI.GolemNetHubAPI.Models.JWT">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.JWT.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.JWT.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.JWT.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.JWT.Equals(GolemMarketMockAPI.GolemNetHubAPI.Models.JWT)">
+            <summary>
+            Returns true if JWT instances are equal
+            </summary>
+            <param name="other">Instance of JWT to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.JWT.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:GolemMarketMockAPI.GolemNetHubAPI.Models.Message">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.GolemNetHubAPI.Models.Message.RequestId">
+            <summary>
+            Gets or Sets RequestId
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.GolemNetHubAPI.Models.Message.Destination">
+            <summary>
+            Destination address
+            </summary>
+            <value>Destination address</value>
+        </member>
+        <member name="P:GolemMarketMockAPI.GolemNetHubAPI.Models.Message.Payload">
+            <summary>
+            Binary data (base64)
+            </summary>
+            <value>Binary data (base64)</value>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.Message.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.Message.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.Message.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.Message.Equals(GolemMarketMockAPI.GolemNetHubAPI.Models.Message)">
+            <summary>
+            Returns true if Message instances are equal
+            </summary>
+            <param name="other">Instance of Message to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.GolemNetHubAPI.Models.Message.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
         </member>
         <member name="T:GolemMarketMockAPI.MarketAPI.Models.Agreement">
             <summary>
