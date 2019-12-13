@@ -199,7 +199,7 @@ namespace GolemMarketMockAPI.Controllers
             }
 
             var offerProposal = (demandProposal.OfferId == null) ?
-                                    new GolemClientMockAPI.Entities.OfferProposal() { Offer = subscription.Offer } :
+                                    new GolemClientMockAPI.Entities.OfferProposal() { Id = subscriptionId, Offer = subscription.Offer } :
                                     this.ProposalRepository.GetOfferProposal(demandProposal.OfferId);
 
             var result = new AgreementProposal()
