@@ -96,7 +96,7 @@ namespace GolemMarketMockAPI.Controllers
 
             this.MarketProcessor.ApproveAgreement(agreementId);
 
-            return StatusCode(200, "\"OK\"");
+            return StatusCode(200, "OK");
         }
 
         /// <summary>
