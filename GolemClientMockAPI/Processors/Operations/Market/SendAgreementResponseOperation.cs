@@ -33,25 +33,32 @@ namespace GolemClientMockAPI.Processors.Operations
 
             if (agreement != null)
             {
-                if(agreement.State != AgreementState.Proposed)
+
+                switch(agreement.State)
                 {
-                    throw new Exception($"Agreement {agreementId} must be in Proposed state, is in {agreement.State}!");
+                    case AgreementState.Proposed:
+                        // 1. Set agreement state according to Provider's decision and persist
+
+                        this.AgreementRepository.UpdateAgreementState(agreementId, this.DecodeIntendedAgreementState(response));
+
+                        // 2. Send the Agreement response to the Requestor
+
+                        if (this.AgreementResultPipelines.ContainsKey(agreementId))
+                        {
+                            this.AgreementResultPipelines[agreementId].Add(response);
+                        }
+                        else
+                        {
+                            throw new Exception($"AgreementId {agreementId} not found in AgreementResultPipelines...");
+                        }
+                        break;
+                    case AgreementState.Cancelled:   // Agreement has been cancelled in between
+                        // 
+                        break;
+                    default:
+                        throw new Exception($"Agreement {agreementId} must be in Proposed state, is in {agreement.State}!");
                 }
                 
-                // 1. Set agreement state to Proposed and persist
-
-                this.AgreementRepository.UpdateAgreementState(agreementId, this.DecodeIntendedAgreementState(response));
-
-                // 2. Send the Agreement response to the Requestor
-
-                if (this.AgreementResultPipelines.ContainsKey(agreementId))
-                {
-                    this.AgreementResultPipelines[agreementId].Add(response);
-                }
-                else
-                {
-                    throw new Exception($"AgreementId {agreementId} not found in AgreementResultPipelines...");
-                }
 
                 return agreement;
             }

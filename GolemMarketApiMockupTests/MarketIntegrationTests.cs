@@ -375,11 +375,13 @@ namespace GolemMarketApiMockupTests
 
             Assert.AreEqual(MarketProviderEvent.MarketProviderEventType.AgreementProposal, receivedAgreementProposal.EventType);
 
-            ProviderProcessor.RejectAgreement(receivedAgreementProposal.Agreement.Id);
+            ProviderProcessor.ApproveAgreement(receivedAgreementProposal.Agreement.Id);
+
+            Assert.AreEqual(AgreementState.Cancelled, agreement.State);
 
             Thread.Sleep(1000);
 
-            Assert.AreEqual(AgreementResultEnum.Rejected, agreementResponse);
+            Assert.AreEqual(AgreementResultEnum.Cancelled, agreementResponse);
 
             DoSubscriptionCleanup(demandSubscription, offerSubscription);
         }

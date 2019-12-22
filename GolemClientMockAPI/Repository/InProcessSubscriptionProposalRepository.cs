@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,21 +16,21 @@ namespace GolemClientMockAPI.Repository
         /// <summary>
         /// Collection of subscriptions, indexed by SubscriptionId
         /// </summary>
-        public IDictionary<string, Subscription> Subscriptions { get; set; } = new Dictionary<string, Subscription>();
+        public IDictionary<string, Subscription> Subscriptions { get; set; } = new ConcurrentDictionary<string, Subscription>();
         /// <summary>
         /// Collection of lists of proposals RECEIVED by subscriptions, indexed by SubscriptionId
         /// </summary>
-        public IDictionary<string, IList<Proposal>> SubscriptionProposals { get; set; } = new Dictionary<string, IList<Proposal>>();
+        public IDictionary<string, IList<Proposal>> SubscriptionProposals { get; set; } = new ConcurrentDictionary<string, IList<Proposal>>();
 
         /// <summary>
         /// Collection of Demand proposals, indexed by Demand Proposal Id
         /// </summary>
-        public IDictionary<string, DemandProposal> DemandProposals { get; set; } = new Dictionary<string, DemandProposal>();
+        public IDictionary<string, DemandProposal> DemandProposals { get; set; } = new ConcurrentDictionary<string, DemandProposal>();
 
         /// <summary>
         /// Collection of Offer proposals, indexed by Offer Proposal Id
         /// </summary>
-        public IDictionary<string, OfferProposal> OfferProposals { get; set; } = new Dictionary<string, OfferProposal>();
+        public IDictionary<string, OfferProposal> OfferProposals { get; set; } = new ConcurrentDictionary<string, OfferProposal>();
 
 
         public object SubscriptionSeqLock { get; set; } = new object();

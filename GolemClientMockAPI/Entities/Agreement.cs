@@ -10,7 +10,8 @@ namespace GolemClientMockAPI.Entities
         New,
         Proposed,
         Approved,
-        Rejected
+        Rejected,
+        Cancelled
     }
 
     public class Agreement

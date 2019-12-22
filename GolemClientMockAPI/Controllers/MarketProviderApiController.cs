@@ -94,15 +94,21 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(401); // Unauthorized
             }
 
-            this.MarketProcessor.ApproveAgreement(agreementId);
+            var agreementEntity = this.MarketProcessor.ApproveAgreement(agreementId);
+
+            if(agreementEntity.State == GolemClientMockAPI.Entities.AgreementState.Cancelled)
+            {
+                return StatusCode(410, "Cancelled");
+            }
 
             return StatusCode(200, "OK");
+
         }
 
         /// <summary>
         /// 
         /// </summary>
-        
+
         /// <param name="subscriptionId"></param>
         /// <param name="timeout"></param>
         /// <param name="maxEvents"></param>

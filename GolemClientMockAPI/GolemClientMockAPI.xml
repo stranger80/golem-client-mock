@@ -1019,6 +1019,13 @@
             These are used to message the responses to ConfirmAgreement calls.
             </summary>
         </member>
+        <member name="M:GolemClientMockAPI.Processors.InMemoryMarketProcessor.CancelAgreement(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="agreementId"></param>
+            <returns>true if cancel succeeds</returns>
+        </member>
         <member name="P:GolemClientMockAPI.Processors.InMemoryNetHubProcessor.NodeDescriptorsByNodeIds">
             <summary>
             Dictionary of NodeDescriptors indexed by NodeIds
@@ -1078,6 +1085,19 @@
             <summary>
             Activity State Details queues, indexed by activityId
             </summary>
+        </member>
+        <member name="M:GolemClientMockAPI.Processors.Operations.CancelAgreementOperation.SendCancelAgreement(System.String)">
+            <summary>
+            - check Agreement state 
+              - if Proposed it means the Agreement hasn't been approved yet
+                - Set Agreement to Cancelled
+                - send Cancelled AgreementResult to Requestor side AgreementResultPipeline (to break any hanging ConfirmAgreement calls)
+                - return true
+              - if not Proposed - it means the Provider has already approved the agreement - cannot cancel
+                - return false
+            </summary>
+            <param name="agreementId"></param>
+            <returns></returns>
         </member>
         <member name="F:GolemClientMockAPI.Processors.Operations.InMemoryMarketOperationBase.RequestorEventPipelines">
             <summary>

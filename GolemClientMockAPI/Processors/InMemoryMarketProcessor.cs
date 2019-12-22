@@ -152,9 +152,23 @@ namespace GolemClientMockAPI.Processors
                 ).Run(agreementId, timeout);
         }
 
-        public void CancelAgreement(string agreementId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="agreementId"></param>
+        /// <returns>true if cancel succeeds</returns>
+        public Task<bool> CancelAgreement(string agreementId)
         {
-            throw new NotImplementedException();
+            return new CancelAgreementOperation(
+                this.SubscriptionRepository,
+                this.ProposalRepository,
+                this.AgreementRepository,
+                this.RequestorEventPipelines,
+                this.DemandSubscriptions,
+                this.ProviderEventPipelines,
+                this.OfferSubscriptions,
+                this.AgreementResultPipelines
+                ).Run(agreementId);
         }
 
         public void UnsubscribeDemand(string subscriptionId)

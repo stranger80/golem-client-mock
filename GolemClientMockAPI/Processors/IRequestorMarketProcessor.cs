@@ -21,7 +21,7 @@ namespace GolemClientMockAPI.Processors
 
         Task<AgreementResultEnum> WaitConfirmAgreementResponseAsync(string agreementId, float? timeout);
 
-        void CancelAgreement(string agreementId);
+        Task<bool> CancelAgreement(string agreementId);
 
         void UnsubscribeDemand(string subscriptionId);
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,9 +9,9 @@ namespace GolemClientMockAPI.Repository
 {
     public class InProcessActivityRepository : IActivityRepository
     {
-        public IDictionary<string, Activity> Activities { get; set; } = new Dictionary<string, Activity>();
+        public IDictionary<string, Activity> Activities { get; set; } = new ConcurrentDictionary<string, Activity>();
 
-        public IDictionary<string, ExeScript> ExeBatches { get; set; } = new Dictionary<string, ExeScript>();
+        public IDictionary<string, ExeScript> ExeBatches { get; set; } = new ConcurrentDictionary<string, ExeScript>();
 
         public Activity CreateActivity(string agreementId, string requestorNodeId, string providerNodeId)
         {

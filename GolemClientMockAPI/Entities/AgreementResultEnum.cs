@@ -9,6 +9,7 @@ namespace GolemClientMockAPI.Entities
     {
         Approved,
         Rejected,
+        Cancelled,
         Timeout
     }
 }

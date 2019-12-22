@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace GolemClientMockAPI.Repository
 {
     public class InProcessAgreementRepository : IAgreementRepository
     {
-        public IDictionary<string, Agreement> Agreements { get; set; } = new Dictionary<string, Agreement>();
+        public IDictionary<string, Agreement> Agreements { get; set; } = new ConcurrentDictionary<string, Agreement>();
 
         public Agreement CreateAgreement(Demand demand, OfferProposal offerProposal)
         {
