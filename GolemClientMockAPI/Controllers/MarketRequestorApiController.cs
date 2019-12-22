@@ -284,7 +284,7 @@ namespace GolemMarketMockAPI.Controllers
             }
 
             var demandProposal = (offerProposal.DemandId == null) ? 
-                                    new GolemClientMockAPI.Entities.DemandProposal() { Demand = subscription.Demand }  : 
+                                    new GolemClientMockAPI.Entities.DemandProposal() { Id = subscriptionId, Demand = subscription.Demand }  : 
                                     this.ProposalRepository.GetDemandProposal(offerProposal.DemandId);
 
             var result = new AgreementProposal()

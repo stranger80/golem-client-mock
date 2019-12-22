@@ -34,6 +34,8 @@ namespace GolemMarketMockAPI.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [ApiController]
+    [Produces("application/json")]
     [GolemClientAuthorizationFilter(DefaultNodeId = "DummyProviderNodeId")]
     public class MarketProviderApiController : Controller
     {
@@ -94,7 +96,7 @@ namespace GolemMarketMockAPI.Controllers
 
             this.MarketProcessor.ApproveAgreement(agreementId);
 
-            return StatusCode(200);
+            return StatusCode(200, "OK");
         }
 
         /// <summary>
@@ -199,7 +201,7 @@ namespace GolemMarketMockAPI.Controllers
             }
 
             var offerProposal = (demandProposal.OfferId == null) ?
-                                    new GolemClientMockAPI.Entities.OfferProposal() { Offer = subscription.Offer } :
+                                    new GolemClientMockAPI.Entities.OfferProposal() { Id = subscriptionId, Offer = subscription.Offer } :
                                     this.ProposalRepository.GetOfferProposal(demandProposal.OfferId);
 
             var result = new AgreementProposal()
@@ -308,7 +310,8 @@ namespace GolemMarketMockAPI.Controllers
             var subscription = this.MarketProcessor.SubscribeOffer(offerEntity);
 
             // return created Subscription Id
-            return this.Content(subscription.Id);
+            // return this.Content(subscription.Id);
+            return StatusCode(201, subscription.Id);
         }
 
         /// <summary>
