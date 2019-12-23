@@ -34,6 +34,8 @@ namespace GolemMarketMockAPI.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [ApiController]
+    [Produces("application/json")]
     [GolemClientAuthorizationFilter(DefaultNodeId = "DummyRequestorNodeId")]
     public class MarketRequestorApiController : Controller
     {
@@ -361,7 +363,7 @@ namespace GolemMarketMockAPI.Controllers
             var subscription = this.MarketProcessor.SubscribeDemand(demandEntity);
             
             // return created Subscription Id
-            return this.Content(subscription.Id);
+            return StatusCode(201, subscription.Id);
         }
 
         /// <summary>

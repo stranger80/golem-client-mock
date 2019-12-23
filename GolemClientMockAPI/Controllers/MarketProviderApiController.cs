@@ -101,7 +101,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(410, "Cancelled");
             }
 
-            return StatusCode(200, "OK");
+            return StatusCode(200);
 
         }
 
@@ -316,7 +316,6 @@ namespace GolemMarketMockAPI.Controllers
             var subscription = this.MarketProcessor.SubscribeOffer(offerEntity);
 
             // return created Subscription Id
-            // return this.Content(subscription.Id);
             return StatusCode(201, subscription.Id);
         }
 
