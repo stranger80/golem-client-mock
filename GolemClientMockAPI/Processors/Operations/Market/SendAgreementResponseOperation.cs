@@ -36,7 +36,7 @@ namespace GolemClientMockAPI.Processors.Operations
 
                 switch(agreement.State)
                 {
-                    case AgreementState.Proposed:
+                    case AgreementState.Pending:
                         // 1. Set agreement state according to Provider's decision and persist
 
                         this.AgreementRepository.UpdateAgreementState(agreementId, this.DecodeIntendedAgreementState(response));

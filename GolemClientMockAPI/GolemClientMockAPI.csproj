@@ -73,6 +73,12 @@
     <Folder Include="Views\Shared\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Controllers\MarketCommonApiController.cs.bak">
+      <DependentUpon>MarketCommonApiController.cs</DependentUpon>
+    </None>
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>

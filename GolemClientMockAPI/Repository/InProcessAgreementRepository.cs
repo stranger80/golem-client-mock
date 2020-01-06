@@ -23,7 +23,7 @@ namespace GolemClientMockAPI.Repository
                 Id = offerProposal.Id,
                 Offer = offerProposal.Offer,
                 Demand = demand,
-                State = AgreementState.New
+                State = AgreementState.Proposal
             };
 
             this.Agreements[agreement.Id] = agreement;

@@ -35,7 +35,7 @@ namespace GolemClientMockAPI.Processors.Operations
             {
                 // 1. Set agreement state to Proposed and persist
 
-                this.AgreementRepository.UpdateAgreementState(agreementId, AgreementState.Proposed);
+                this.AgreementRepository.UpdateAgreementState(agreementId, AgreementState.Pending);
 
                 // 2. Send the Agreement in Proposed state to the Provider
 

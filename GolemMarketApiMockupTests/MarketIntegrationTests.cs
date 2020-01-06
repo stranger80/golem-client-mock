@@ -240,7 +240,7 @@ namespace GolemMarketApiMockupTests
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);
-            Assert.AreEqual(AgreementState.New, agreement.State);
+            Assert.AreEqual(AgreementState.Proposal, agreement.State);
             Assert.IsNotNull(agreement.Demand);
 
             // Confirm and start waiting for Agreement proposal response
@@ -292,7 +292,7 @@ namespace GolemMarketApiMockupTests
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);
-            Assert.AreEqual(AgreementState.New, agreement.State);
+            Assert.AreEqual(AgreementState.Proposal, agreement.State);
             Assert.IsNotNull(agreement.Demand);
 
             // Confirm and start waiting for Agreement proposal response
@@ -344,7 +344,7 @@ namespace GolemMarketApiMockupTests
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);
-            Assert.AreEqual(AgreementState.New, agreement.State);
+            Assert.AreEqual(AgreementState.Proposal, agreement.State);
             Assert.IsNotNull(agreement.Demand);
 
             // Confirm and start waiting for Agreement proposal response
