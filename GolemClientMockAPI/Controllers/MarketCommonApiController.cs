@@ -112,7 +112,7 @@ namespace GolemMarketMockAPI.Controllers
         /// <response code="401">Authorization information is missing or invalid.</response>
         /// <response code="404">The specified resource was not found.</response>
         /// <response code="409">Agreement not in Approved state.</response>
-        /// <response code="410">Agreement cancelled by Requstor.</response>
+        /// <response code="410">Agreement cancelled by the Requstor.</response>
         /// <response code="0">Unexpected error.</response>
         [HttpPost]
         [Route("/market-api/v1/agreements/{agreementId}/terminate")]
