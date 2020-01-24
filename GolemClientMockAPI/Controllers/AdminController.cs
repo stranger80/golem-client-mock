@@ -107,10 +107,13 @@ namespace GolemClientMockAPI.Controllers
         };
 
         public IStatsRepository StatsRepository { get; set; }
+        
+        public IAppKeyRepository AppKeyRepository { get; set; }
 
-        public AdminController(IStatsRepository statsRepo)
+        public AdminController(IStatsRepository statsRepo, IAppKeyRepository appkeyRepo)
         {
             this.StatsRepository = statsRepo;
+            this.AppKeyRepository = appkeyRepo;
         }
 
 
@@ -146,6 +149,20 @@ namespace GolemClientMockAPI.Controllers
         {
             return this.StatsRepository.GetSubscriptionDetails(nodeId, subscriptionId);
         }
+
+
+        [HttpPost("import-key")]
+
+        public virtual IActionResult ImportKey([FromBody]KeyDesc[] keys) {
+            foreach (var key in keys) {
+                Console.WriteLine($"key={key.Key}, node_id={key.NodeId}");
+            }
+            AppKeyRepository.RegisterKeys(keys);
+
+            return new JsonResult(keys.Length);
+        }
+
+
 
     }
 
