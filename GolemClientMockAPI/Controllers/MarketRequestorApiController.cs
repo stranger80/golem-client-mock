@@ -359,15 +359,15 @@ namespace GolemMarketMockAPI.Controllers
             demandEntity.NodeId = clientContext.NodeId;
 
             var subscription = this.MarketProcessor.SubscribeDemand(demandEntity);
-            
+
             // return created Subscription Id
-            return this.Content(subscription.Id);
+            return StatusCode(201, subscription.Id);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        
+
         /// <param name="subscriptionId"></param>
         /// <response code="204">Delete</response>
         /// <response code="404">Subscription not found</response>

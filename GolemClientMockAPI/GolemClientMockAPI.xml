@@ -1425,6 +1425,21 @@
             <response code="404">Not Found</response>
             <response code="500">Server Error</response>
         </member>
+        <member name="T:GolemMarketMockAPI.Controllers.MarketCommonApiController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GolemMarketMockAPI.Controllers.MarketCommonApiController.GetAgreement(System.String)">
+            <summary>
+            Fetches agreement with given agreement id.
+            </summary>
+            <param name="agreementId"></param>
+            <response code="200">Agreement.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="0">Unexpected error.</response>
+        </member>
         <member name="T:GolemMarketMockAPI.Controllers.MarketProviderApiController">
             <summary>
             
