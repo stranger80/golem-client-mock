@@ -24,6 +24,8 @@ namespace GolemClientMockAPI.Modules
                  .SingleInstance();
             builder.RegisterType<OfferMapper>().AsSelf()
                  .SingleInstance();
+            builder.RegisterType<AgreementMapper>().AsSelf()
+                 .SingleInstance();
 
             builder.RegisterType<InMemoryMarketProcessor>()
                 .As<IRequestorMarketProcessor>()

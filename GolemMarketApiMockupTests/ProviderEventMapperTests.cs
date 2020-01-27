@@ -47,12 +47,12 @@ namespace GolemMarketApiMockupTests
                 }
             };
 
-            var result = mapper.Map(entity) as GolemMarketMockAPI.MarketAPI.Models.DemandEvent;
+            var result = mapper.Map(entity) as GolemMarketMockAPI.MarketAPI.Models.ProposalEvent;
 
-            Assert.AreEqual(entity.DemandProposal.Demand.Constraints, result.Demand.Constraints);
-            Assert.AreEqual(entity.DemandProposal.OfferId, result.Demand.PrevProposalId);
-            Assert.AreEqual(entity.DemandProposal.Id, result.Demand.Id);
-            Assert.AreEqual(entity.DemandProposal.Demand.NodeId, result.RequestorId);
+            Assert.AreEqual(entity.DemandProposal.Demand.Constraints, result.Proposal.Constraints);
+            Assert.AreEqual(entity.DemandProposal.OfferId, result.Proposal.PrevProposalId);
+            Assert.AreEqual(entity.DemandProposal.Id, result.Proposal.ProposalId);
+            Assert.AreEqual(entity.DemandProposal.Demand.NodeId, result.Proposal.IssuerId);
 
         }
 

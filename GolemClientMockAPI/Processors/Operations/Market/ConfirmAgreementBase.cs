@@ -53,7 +53,7 @@ namespace GolemClientMockAPI.Processors.Operations
                         {
                             EventType = MarketProviderEvent.MarketProviderEventType.AgreementProposal,
                             Agreement = agreement,
-                            RequestorId = agreement.Demand.NodeId
+                            RequestorId = agreement.DemandProposal.Demand.NodeId
                         });
                 }
                 else

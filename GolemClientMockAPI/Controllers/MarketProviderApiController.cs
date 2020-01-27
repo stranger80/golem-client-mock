@@ -98,7 +98,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(404, new Error() { }); // Not Found
             }
 
-            if (clientContext.NodeId != agreement.Offer.NodeId)
+            if (clientContext.NodeId != agreement.OfferProposal.Offer.NodeId)
             {
                 return StatusCode(401, new Error() { }); // Unauthorized
             }
@@ -329,7 +329,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(404, new Error() { }); // Not Found
             }
 
-            if (clientContext.NodeId != agreement.Offer.NodeId)
+            if (clientContext.NodeId != agreement.OfferProposal.Offer.NodeId)
             {
                 return StatusCode(401, new Error() { }); // Unauthorized
             }

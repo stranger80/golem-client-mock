@@ -22,8 +22,8 @@ namespace GolemClientMockAPI.Entities
 
         public AgreementState State { get; set; }
 
-        public Demand Demand { get; set; }
+        public DemandProposal DemandProposal { get; set; }
 
-        public Offer Offer { get; set; }
+        public OfferProposal OfferProposal { get; set; }
     }
 }

@@ -79,7 +79,7 @@ namespace GolemMarketMockAPI.Controllers
                     return this.StatusCode(404); // Agreement not found
                 }
 
-                if (agreement.Demand.NodeId != clientContext.NodeId)
+                if (agreement.DemandProposal.Demand.NodeId != clientContext.NodeId)
                 {
                     return this.StatusCode(403); // Not entitled to acto on the agreement
                 }

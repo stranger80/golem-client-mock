@@ -31,22 +31,22 @@ namespace GolemClientMockAPI.Processors.Operations
             {
                 // 1. Locate offer to which this demand is a response to, and put the OfferProposal in its Subscription pipeline
 
-                var demand = offerProposal.DemandId == null ? 
-                                subscription.Demand : 
-                                this.ProposalRepository.GetDemandProposal(offerProposal.DemandId)?.Demand;
+                var demandProposal = offerProposal.DemandId == null ? 
+                                new DemandProposal() { Id = subscription.Id, Demand = subscription.Demand } : 
+                                this.ProposalRepository.GetDemandProposal(offerProposal.DemandId);
 
                 if(offerProposal == null)
                 {
                     throw new Exception($"OfferProposalId {offerProposalId} not found in Proposal repository...");
                 }
 
-                if(demand == null)
+                if(demandProposal == null)
                 {
                     throw new Exception($"Demand Id {offerProposal.DemandId} for Offer Proposal Id {offerProposalId} not found...");
                 }
 
                 // 2. Persist the agreement
-                var agreement = this.AgreementRepository.CreateAgreement(demand, offerProposal);
+                var agreement = this.AgreementRepository.CreateAgreement(demandProposal, offerProposal);
 
                 return agreement;
             }

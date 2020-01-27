@@ -46,6 +46,7 @@ namespace GolemMarketMockAPI.Controllers
         public MarketRequestorEventMapper RequestorEventMapper { get; set; }
         public DemandMapper DemandMapper { get; set; }
         public OfferMapper OfferMapper { get; set; }
+        public AgreementMapper AgreementMapper { get; set; }
 
         public MarketCommonApiController(IRequestorMarketProcessor marketProcessor,
             ISubscriptionRepository subscriptionRepository,
@@ -53,7 +54,8 @@ namespace GolemMarketMockAPI.Controllers
             IAgreementRepository agreementRepository,
             MarketRequestorEventMapper requestorEventMapper,
             DemandMapper demandMapper,
-            OfferMapper offerMapper)
+            OfferMapper offerMapper,
+            AgreementMapper agreementMapper)
         {
             this.MarketProcessor = marketProcessor;
             this.SubscriptionRepository = subscriptionRepository;
@@ -62,6 +64,7 @@ namespace GolemMarketMockAPI.Controllers
             this.RequestorEventMapper = requestorEventMapper;
             this.DemandMapper = demandMapper;
             this.OfferMapper = offerMapper;
+            this.AgreementMapper = agreementMapper;
         }
 
 
@@ -82,25 +85,25 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
         [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
         public virtual IActionResult GetAgreement([FromRoute][Required]string agreementId)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(Agreement));
+        {
+            var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
-            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401, default(Error));
+            // locate the agreement
+            var agreementEntity = this.AgreementRepository.GetAgreement(agreementId);
 
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404, default(Error));
+            if (agreementEntity == null)
+            {
+                return StatusCode(404); // Not Found
+            }
 
-            //TODO: Uncomment the next line to return response 0 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(0, default(Error));
-            string exampleJson = null;
-            exampleJson = "{\n  \"offer\" : \"\",\n  \"approvedDate\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"agreementId\" : \"agreementId\",\n  \"approved_signature\" : \"approved_signature\",\n  \"proposed_signature\" : \"proposed_signature\",\n  \"state\" : \"Proposal\",\n  \"demand\" : \"\",\n  \"committed_signature\" : \"committed_signature\",\n  \"validTo\" : \"2000-01-23T04:56:07.000+00:00\"\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<Agreement>(exampleJson)
-                        : default(Agreement);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            if (clientContext.NodeId != agreementEntity.DemandProposal.Demand.NodeId)
+            {
+                return StatusCode(401); // Unauthorized
+            }
+
+            var agreement = AgreementMapper.MapEntityToAgreement(agreementEntity);
+
+            return StatusCode(200, agreement);
         }
 
 

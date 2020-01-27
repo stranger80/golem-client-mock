@@ -39,7 +39,13 @@ namespace GolemMarketApiMockupTests
         {
             // Test scenario
 
-            var demand = new Demand() { Constraints = "", NodeId = "DummyRequestorNode1", Properties = new Dictionary<string, string>() };
+            
+            var demand = new DemandProposal() {
+                            OfferId = "dummyOfferId",
+                            InternalId = 2,
+                            Id = "DummyProposalId",
+                            Demand = new Demand() { Constraints = "", NodeId = "DummyRequestorNode1", Properties = new Dictionary<string, string>() }
+            };
             var offer = new OfferProposal() {
                             DemandId = "dummyDemandId",
                             Id = "DummyProposalId",
