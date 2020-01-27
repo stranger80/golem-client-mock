@@ -34,6 +34,8 @@ namespace GolemMarketMockAPI.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [ApiController]
+    [Produces("application/json")]
     [GolemClientAuthorizationFilter(DefaultNodeId = "DummyRequestorNodeId")]
     public class MarketRequestorApiController : Controller
     {
