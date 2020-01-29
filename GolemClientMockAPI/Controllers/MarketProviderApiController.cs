@@ -110,12 +110,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(410, new Error() { });
             }
 
-<<<<<<< HEAD
             return StatusCode(204);
-=======
-            return StatusCode(200);
->>>>>>> origin/appkey-auth
-
         }
 
         /// <summary>
