@@ -26,6 +26,11 @@ namespace GolemMarketMockAPI.MarketAPI.Models
     [DataContract]
     public partial class Event : IEquatable<Event>
     { 
+        public Event() {
+            this.EventDate = DateTime.Now;
+        }
+
+
         /// <summary>
         /// Gets or Sets EventType
         /// </summary>
@@ -38,7 +43,7 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         /// </summary>
         [Required]
         [DataMember(Name="eventDate")]
-        public DateTime? EventDate { get; set; }
+        public DateTime EventDate { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
