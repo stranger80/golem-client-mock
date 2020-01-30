@@ -97,9 +97,7 @@ namespace GolemClientMockAPI.Processors
                 ).Run(demandSubscriptionId, offerProposalId, demand);
         }
 
-        public Agreement CreateAgreement(string offerProposalId)
-        {
-            return new CreateAgreementOperation(
+        public Agreement CreateAgreement(String proposalId, DateTime validTo) => new CreateAgreementOperation(
                 this.SubscriptionRepository,
                 this.ProposalRepository,
                 this.AgreementRepository,
@@ -107,8 +105,7 @@ namespace GolemClientMockAPI.Processors
                 this.DemandSubscriptions,
                 this.ProviderEventPipelines,
                 this.OfferSubscriptions
-                ).Run(offerProposalId);
-        }
+                ).Run(proposalId, validTo);
 
         public Task<AgreementResultEnum> ConfirmAgreementAsync(string agreementId, float? timeout)
         {

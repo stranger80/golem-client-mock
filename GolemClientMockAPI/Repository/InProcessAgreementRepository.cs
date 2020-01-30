@@ -11,7 +11,7 @@ namespace GolemClientMockAPI.Repository
     {
         public IDictionary<string, Agreement> Agreements { get; set; } = new ConcurrentDictionary<string, Agreement>();
 
-        public Agreement CreateAgreement(DemandProposal demandProposal, OfferProposal offerProposal)
+        public Agreement CreateAgreement(DemandProposal demandProposal, OfferProposal offerProposal, DateTime validTo)
         {
             if(this.Agreements.ContainsKey(offerProposal.Id))
             {
@@ -23,7 +23,8 @@ namespace GolemClientMockAPI.Repository
                 Id = offerProposal.Id,
                 OfferProposal = offerProposal,
                 DemandProposal = demandProposal,
-                State = AgreementState.Proposal
+                State = AgreementState.Proposal,
+                ValidTo = validTo
             };
 
             this.Agreements[agreement.Id] = agreement;
