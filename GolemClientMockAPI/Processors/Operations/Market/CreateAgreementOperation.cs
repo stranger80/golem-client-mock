@@ -21,7 +21,7 @@ namespace GolemClientMockAPI.Processors.Operations
         {
         }
 
-        public Agreement Run(string offerProposalId)
+        public Agreement Run(string offerProposalId, DateTime validTo)
         {
             // 0. Validate the subscription
             var offerProposal = this.ProposalRepository.GetOfferProposal(offerProposalId);
@@ -46,7 +46,7 @@ namespace GolemClientMockAPI.Processors.Operations
                 }
 
                 // 2. Persist the agreement
-                var agreement = this.AgreementRepository.CreateAgreement(demandProposal, offerProposal);
+                var agreement = this.AgreementRepository.CreateAgreement(demandProposal, offerProposal, validTo);
 
                 return agreement;
             }

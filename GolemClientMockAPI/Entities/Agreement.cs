@@ -25,5 +25,7 @@ namespace GolemClientMockAPI.Entities
         public DemandProposal DemandProposal { get; set; }
 
         public OfferProposal OfferProposal { get; set; }
+
+        public DateTime ValidTo { get; set; }
     }
 }

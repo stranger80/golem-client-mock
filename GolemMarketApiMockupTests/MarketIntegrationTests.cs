@@ -236,7 +236,7 @@ namespace GolemMarketApiMockupTests
             // OK, so the reqEvents2 now contains an offer which is acceptable.
             // Requestor can move on to propose Agreement...
 
-            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id);
+            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id, System.DateTime.Now);
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);
@@ -288,7 +288,7 @@ namespace GolemMarketApiMockupTests
             // OK, so the reqEvents2 now contains an offer which is acceptable.
             // Requestor can move on to propose Agreement...
 
-            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id);
+            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id, System.DateTime.Now);
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);
@@ -340,7 +340,7 @@ namespace GolemMarketApiMockupTests
             // OK, so the reqEvents2 now contains an offer which is acceptable.
             // Requestor can move on to propose Agreement...
 
-            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id);
+            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id, System.DateTime.Now);
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);

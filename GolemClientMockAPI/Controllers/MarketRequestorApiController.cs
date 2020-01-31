@@ -232,7 +232,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(401, new Error() { }); // Unauthorized
             }
 
-            var resultAgreement = this.MarketProcessor.CreateAgreement(agreement.ProposalId);
+            var resultAgreement = this.MarketProcessor.CreateAgreement(agreement.ProposalId, agreement.ValidTo);
 
             return StatusCode(201, resultAgreement.Id);
 

@@ -32,6 +32,10 @@ namespace GolemClientMockAPI.Modules
                 .As<IProviderMarketProcessor>()
                 .SingleInstance();
 
+            builder.RegisterType<InProcessAppKeyRepository>()
+                .As<IAppKeyRepository>()
+                .SingleInstance();
+
             builder.RegisterType<InProcessAgreementRepository>()
                 .As<IAgreementRepository>()
                 .SingleInstance();

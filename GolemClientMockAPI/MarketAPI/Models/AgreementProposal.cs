@@ -40,7 +40,7 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         /// <value>End of validity period. Agreement needs to be accepted, rejected or cancellled before this date; otherwise will expire </value>
         [Required]
         [DataMember(Name="validTo")]
-        public DateTime? ValidTo { get; set; }
+        public DateTime ValidTo { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

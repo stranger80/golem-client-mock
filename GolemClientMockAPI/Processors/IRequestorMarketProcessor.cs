@@ -14,7 +14,7 @@ namespace GolemClientMockAPI.Processors
 
         DemandProposal CreateDemandProposal(string subscriptionId, string offerProposalId, Demand demand);
 
-        Agreement CreateAgreement(string offerProposalId);
+        Agreement CreateAgreement(String proposal, DateTime validTo);
 
         Task<AgreementResultEnum> ConfirmAgreementAsync(string agreementId, float? timeout);
         void SendConfirmAgreement(string agreementId);

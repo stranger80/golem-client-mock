@@ -32,6 +32,7 @@ namespace GolemClientMockAPI.Security
             // and inject default if no header
 
             var config = context.HttpContext.RequestServices.GetService(typeof(IConfigProvider)) as IConfigProvider;
+            var keyRepo = context.HttpContext.RequestServices.GetService(typeof(IAppKeyRepository)) as IAppKeyRepository;
 
             if (context.HttpContext.Request.Headers.ContainsKey("Authorization"))
             {
@@ -40,6 +41,12 @@ namespace GolemClientMockAPI.Security
                 var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault();
 
                 token = token.Replace("Bearer ", "");
+                var nodeId = keyRepo.GetNodeForKey(token);
+                if (nodeId != null) {
+                    clientContext.NodeId = nodeId;
+                    context.HttpContext.Items["ClientContext"] = clientContext;
+                    return;
+                }
 
                 var tokenHandler = new JwtSecurityTokenHandler();
                 try
