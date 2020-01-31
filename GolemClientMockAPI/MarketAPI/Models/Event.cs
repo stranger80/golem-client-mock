@@ -27,7 +27,6 @@ namespace GolemMarketMockAPI.MarketAPI.Models
     public partial class Event : IEquatable<Event>
     { 
         public Event() {
-            this.EventDate = DateTime.Now;
         }
 
 

@@ -3,6 +3,7 @@ using GolemClientMockAPI.Entities;
 using GolemClientMockAPI.Mappers;
 using GolemMarketApiMockup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,6 +34,7 @@ namespace GolemMarketApiMockupTests
 
             var entity = new MarketProviderEvent()
             {
+                EventDate = DateTime.Now,
                 EventType = MarketProviderEvent.MarketProviderEventType.Proposal,
                 DemandProposal = new DemandProposal()
                 {
