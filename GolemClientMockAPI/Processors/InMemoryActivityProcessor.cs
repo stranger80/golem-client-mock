@@ -17,17 +17,17 @@ namespace GolemClientMockAPI.Processors
         /// <summary>
         /// Collection of Provider Activity Event queues, indexed by Provider Node Id
         /// </summary>
-        public IDictionary<string, BlockingCollection<ActivityProviderEvent>> ProviderEventQueues { get; set; } = new Dictionary<string, BlockingCollection<ActivityProviderEvent>>();
+        public IDictionary<string, BlockingCollection<ActivityProviderEvent>> ProviderEventQueues { get; set; } = new ConcurrentDictionary<string, BlockingCollection<ActivityProviderEvent>>();
 
         /// <summary>
         /// Collection of Requestor Activity Event queues, indexed by ExeScriptBatchIds
         /// </summary>
-        public IDictionary<string, BlockingCollection<ActivityRequestorEvent>> ExeScriptBatchQueues { get; set; } = new Dictionary<string, BlockingCollection<ActivityRequestorEvent>>();
+        public IDictionary<string, BlockingCollection<ActivityRequestorEvent>> ExeScriptBatchQueues { get; set; } = new ConcurrentDictionary<string, BlockingCollection<ActivityRequestorEvent>>();
 
         /// <summary>
         /// Collection of Requestor Activity Event queues, indexed by ActivityIds
         /// </summary>
-        public IDictionary<string, BlockingCollection<ActivityRequestorEvent>> ActivityEventQueues { get; set; } = new Dictionary<string, BlockingCollection<ActivityRequestorEvent>>();
+        public IDictionary<string, BlockingCollection<ActivityRequestorEvent>> ActivityEventQueues { get; set; } = new ConcurrentDictionary<string, BlockingCollection<ActivityRequestorEvent>>();
 
 
         public InMemoryActivityProcessor(IAgreementRepository agreementRepository,

@@ -29,28 +29,28 @@ namespace GolemClientMockAPI.Processors
         /// <summary>
         /// Requestor subscription pipelines, indexed by SubscriptionId
         /// </summary>
-        protected IDictionary<string, SubscriptionPipeline<DemandSubscription, MarketRequestorEvent>> RequestorEventPipelines = new Dictionary<string, SubscriptionPipeline<DemandSubscription, MarketRequestorEvent>>();
+        protected IDictionary<string, SubscriptionPipeline<DemandSubscription, MarketRequestorEvent>> RequestorEventPipelines = new ConcurrentDictionary<string, SubscriptionPipeline<DemandSubscription, MarketRequestorEvent>>();
 
         /// <summary>
         /// Dictionary of Demand subscriptionIds indexed by Demand/Proposal Ids which have been issued in those subscriptions.
         /// </summary>
-        protected IDictionary<string, string> DemandSubscriptions = new Dictionary<string, string>();
+        protected IDictionary<string, string> DemandSubscriptions = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// Provider subscription pipelines, indexed by SubscriptionId
         /// </summary>
-        protected IDictionary<string, SubscriptionPipeline<OfferSubscription, MarketProviderEvent>> ProviderEventPipelines = new Dictionary<string, SubscriptionPipeline<OfferSubscription, MarketProviderEvent>>();
+        protected IDictionary<string, SubscriptionPipeline<OfferSubscription, MarketProviderEvent>> ProviderEventPipelines = new ConcurrentDictionary<string, SubscriptionPipeline<OfferSubscription, MarketProviderEvent>>();
 
         /// <summary>
         /// Dictionary of Offer subscriptionIds indexed by Offer/Proposal Ids which have been issued in those subscriptions.
         /// </summary>
-        protected IDictionary<string, string> OfferSubscriptions = new Dictionary<string, string>();
+        protected IDictionary<string, string> OfferSubscriptions = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// Dictionary of blocking queues of AgreementResultEnum, indexed by Agreement Id. 
         /// These are used to message the responses to ConfirmAgreement calls.
         /// </summary>
-        protected IDictionary<string, BlockingCollection<AgreementResultEnum>> AgreementResultPipelines = new Dictionary<string, BlockingCollection<AgreementResultEnum>>();
+        protected IDictionary<string, BlockingCollection<AgreementResultEnum>> AgreementResultPipelines = new ConcurrentDictionary<string, BlockingCollection<AgreementResultEnum>>();
 
 
         public InMemoryMarketProcessor(ISubscriptionRepository subscriptionRepository, 
