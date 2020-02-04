@@ -96,6 +96,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(404); // Not Found
             }
 
+            /*
             if (
                 (clientContext.NodeId != agreementEntity.DemandProposal.Demand.NodeId) 
                 && 
@@ -105,6 +106,7 @@ namespace GolemMarketMockAPI.Controllers
                 Console.WriteLine($"whould have returned 401 Unauthorized because of context {clientContext.NodeId} != {agreementEntity.DemandProposal.Demand.NodeId} agreement");
                 return StatusCode(401); // Unauthorized
             }
+            */
 
             var agreement = AgreementMapper.MapEntityToAgreement(agreementEntity);
 
