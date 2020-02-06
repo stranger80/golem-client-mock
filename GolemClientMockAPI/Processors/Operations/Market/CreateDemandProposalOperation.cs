@@ -44,6 +44,7 @@ namespace GolemClientMockAPI.Processors.Operations
                     this.ProviderEventPipelines[this.OfferSubscriptions[offerProposalId]].PipelineQueue.Add(
                         new MarketProviderEvent()
                         {
+                            EventDate = DateTime.Now,
                             EventType = MarketProviderEvent.MarketProviderEventType.Proposal,
                             DemandProposal = demandProposal,
                             RequestorId = demandProposal.Demand.NodeId
