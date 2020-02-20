@@ -179,32 +179,39 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
         [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
         [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
-        public virtual IActionResult CreateProposalOffer([FromBody]Proposal body, [FromRoute][Required]string subscriptionId, [FromRoute][Required]string proposalId)
-        { 
-            //TODO: Uncomment the next line to return response 201 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(201, default(string));
+        public virtual IActionResult CreateProposalOffer([FromBody]Proposal offerProposal, [FromRoute][Required]string subscriptionId, [FromRoute][Required]string proposalId)
+        {
+            var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(Error));
+            var subscription = this.SubscriptionRepository.GetOfferSubscription(subscriptionId);
 
-            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401, default(Error));
+            if (subscription == null)
+            {
+                return StatusCode(404, new Error() { }); // Not Found
+            }
 
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404, default(Error));
+            if (clientContext.NodeId != subscription.Offer.NodeId)
+            {
+                return StatusCode(401, new Error() { }); // Unauthorized
+            }
 
-            //TODO: Uncomment the next line to return response 410 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(410);
+            var offerEntity = new GolemClientMockAPI.Entities.Offer()
+            {
+                NodeId = clientContext.NodeId,
+                Constraints = offerProposal.Constraints,
+                Properties = offerProposal.Properties as Dictionary<string, string>
+            };
 
-            //TODO: Uncomment the next line to return response 0 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(0, default(Error));
-            string exampleJson = null;
-            exampleJson = "\"\"";
-            
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<string>(exampleJson)
-                        : default(string);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            try
+            {
+                var offerProposalEntity = this.MarketProcessor.CreateOfferProposal(subscriptionId, proposalId, offerEntity);
+
+                return StatusCode(201, offerProposalEntity.Id);
+            }
+            catch (Exception exc)
+            {
+                return StatusCode(404, new Error() { }); // Not Found
+            }
         }
 
 

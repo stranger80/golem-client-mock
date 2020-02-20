@@ -287,7 +287,7 @@ namespace GolemMarketMockAPI.Controllers
             {
                 var demandProposalEntity = this.MarketProcessor.CreateDemandProposal(subscriptionId, proposalId, demandEntity);
 
-                return new ObjectResult(demandProposalEntity.Id) { StatusCode = 201 };
+                return StatusCode(201, demandProposalEntity.Id);
             }
             catch (Exception exc)
             {
