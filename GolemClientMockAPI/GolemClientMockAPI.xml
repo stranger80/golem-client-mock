@@ -1222,6 +1222,13 @@
             <param name="subscriptionId"></param>
             <returns>null if Demand Subscription not found.</returns>
         </member>
+        <member name="M:GolemClientMockAPI.Repository.ISubscriptionRepository.GetActiveDemandSubscriptions(System.String)">
+            <summary>
+            Fetch the active Demand Subscriptions for given nodeId.
+            </summary>
+            <param name="nodeId"></param>
+            <returns></returns>
+        </member>
         <member name="M:GolemClientMockAPI.Repository.ISubscriptionRepository.DeleteDemandSubscription(System.String)">
             <summary>
             Remove the Demand subscription.
@@ -1257,6 +1264,13 @@
             </summary>
             <param name="subscriptionId"></param>
             <returns>null if Offer Subscription not found.</returns>
+        </member>
+        <member name="M:GolemClientMockAPI.Repository.ISubscriptionRepository.GetActiveOfferSubscriptions(System.String)">
+            <summary>
+            Fetch the active Offer Subscriptions for given nodeId.
+            </summary>
+            <param name="nodeId"></param>
+            <returns></returns>
         </member>
         <member name="M:GolemClientMockAPI.Repository.ISubscriptionRepository.DeleteOfferSubscription(System.String)">
             <summary>
@@ -1498,6 +1512,15 @@
             <response code="410">Proposal rejected.</response>
             <response code="0">Unexpected error.</response>
         </member>
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.GetOffers">
+            <summary>
+            Fetches all active Offers which have been published by the Provider.
+            </summary>
+            <response code="200">Offer list.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="0">Unexpected error.</response>
+        </member>
         <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.GetProposalDemand(System.String,System.String)">
             <summary>
             Fetches Proposal (Demand) with given id.
@@ -1639,6 +1662,15 @@
             <response code="401">Authorization information is missing or invalid.</response>
             <response code="404">The specified resource was not found.</response>
             <response code="410">Proposal rejected.</response>
+            <response code="0">Unexpected error.</response>
+        </member>
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.GetDemands">
+            <summary>
+            Fetches all active Demands which have been published by the Requestor.
+            </summary>
+            <response code="200">Demand list.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
             <response code="0">Unexpected error.</response>
         </member>
         <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.GetProposalOffer(System.String,System.String)">

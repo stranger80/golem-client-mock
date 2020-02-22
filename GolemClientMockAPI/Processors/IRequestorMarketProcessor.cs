@@ -8,6 +8,8 @@ namespace GolemClientMockAPI.Processors
 {
     public interface IRequestorMarketProcessor
     {
+        Task<ICollection<DemandSubscription>> GetDemandsAsync(string nodeId);
+
         DemandSubscription SubscribeDemand(Demand demand);
 
         Task<ICollection<MarketRequestorEvent>> CollectRequestorEventsAsync(string subscriptionId, float? timeout, int? maxEvents);

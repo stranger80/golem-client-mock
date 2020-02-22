@@ -64,6 +64,11 @@ namespace GolemClientMockAPI.Processors
 
         #region Requestor interface
 
+        public async Task<ICollection<DemandSubscription>> GetDemandsAsync(string nodeId)
+        {
+            return this.SubscriptionRepository.GetActiveDemandSubscriptions(nodeId);
+        }
+
         public DemandSubscription SubscribeDemand(Demand demand)
         {
             return new SubscribeDemandOperation(
@@ -183,6 +188,11 @@ namespace GolemClientMockAPI.Processors
         #endregion
 
         #region Provider interface
+
+        public async Task<ICollection<OfferSubscription>> GetOffersAsync(string nodeId)
+        {
+            return this.SubscriptionRepository.GetActiveOfferSubscriptions(nodeId);
+        }
 
         public OfferSubscription SubscribeOffer(Offer offer)
         {

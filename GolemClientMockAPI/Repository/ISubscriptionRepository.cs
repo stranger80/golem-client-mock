@@ -23,6 +23,13 @@ namespace GolemClientMockAPI.Repository
         DemandSubscription GetDemandSubscription(string subscriptionId);
 
         /// <summary>
+        /// Fetch the active Demand Subscriptions for given nodeId.
+        /// </summary>
+        /// <param name="nodeId"></param>
+        /// <returns></returns>
+        ICollection<DemandSubscription> GetActiveDemandSubscriptions(string nodeId);
+
+        /// <summary>
         /// Remove the Demand subscription.
         /// </summary>
         /// <param name="subscriptionId"></param>
@@ -57,6 +64,13 @@ namespace GolemClientMockAPI.Repository
         /// <param name="subscriptionId"></param>
         /// <returns>null if Offer Subscription not found.</returns>
         OfferSubscription GetOfferSubscription(string subscriptionId);
+
+        /// <summary>
+        /// Fetch the active Offer Subscriptions for given nodeId.
+        /// </summary>
+        /// <param name="nodeId"></param>
+        /// <returns></returns>
+        ICollection<OfferSubscription> GetActiveOfferSubscriptions(string nodeId);
 
         /// <summary>
         /// Remove the Offer subscription.

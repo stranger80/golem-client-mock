@@ -30,7 +30,7 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         /// Gets or Sets DemandId
         /// </summary>
         [DataMember(Name="demandId")]
-        public string DemandId { get; private set; }
+        public string DemandId { get; set; }
 
         /// <summary>
         /// Gets or Sets RequestorId

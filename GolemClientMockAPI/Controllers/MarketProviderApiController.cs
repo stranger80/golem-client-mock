@@ -214,6 +214,39 @@ namespace GolemMarketMockAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Fetches all active Offers which have been published by the Provider.
+        /// </summary>
+        /// <response code="200">Offer list.</response>
+        /// <response code="400">Bad request.</response>
+        /// <response code="401">Authorization information is missing or invalid.</response>
+        /// <response code="0">Unexpected error.</response>
+        [HttpGet]
+        [Route("/market-api/v1/offers")]
+        [ValidateModelState]
+        [SwaggerOperation("GetOffers")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<>), description: "Offer list.")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "Bad request.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        public virtual IActionResult GetOffers()
+        {
+            var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
+
+            var subscriptions = this.SubscriptionRepository.GetActiveOfferSubscriptions(clientContext.NodeId);
+
+            try
+            {
+                var offers = subscriptions.Select(subs => this.OfferMapper.MapEntityToModel(subs));
+
+                return StatusCode(201, offers);
+            }
+            catch (Exception exc)
+            {
+                return StatusCode(0, new Error() { }); // unexpecetd error
+            }
+        }
+
 
         /// <summary>
         /// Fetches Proposal (Demand) with given id.

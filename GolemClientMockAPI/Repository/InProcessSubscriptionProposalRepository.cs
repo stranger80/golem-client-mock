@@ -139,6 +139,36 @@ namespace GolemClientMockAPI.Repository
             }
         }
 
+        public ICollection<DemandSubscription> GetActiveDemandSubscriptions(string nodeId)
+        {
+            return this.Subscriptions.Values.Where(subs =>
+                {
+                    var demand = subs as DemandSubscription;
+                    if (demand != null)
+                    {
+                        return demand.Demand.NodeId == nodeId;
+                    }
+                    else
+                        return false;
+                }
+            ).Select(subs => subs as DemandSubscription).ToList();
+        }
+
+        public ICollection<OfferSubscription> GetActiveOfferSubscriptions(string nodeId)
+        {
+            return this.Subscriptions.Values.Where(subs =>
+            {
+                var offer = subs as OfferSubscription;
+                if (offer != null)
+                {
+                    return offer.Offer.NodeId == nodeId;
+                }
+                else
+                    return false;
+            }
+            ).Select(subs => subs as OfferSubscription).ToList();
+        }
+
         public void UpdateLastProposalId(string subscriptionId, int? internalId)
         {
             if (this.Subscriptions.ContainsKey(subscriptionId))
