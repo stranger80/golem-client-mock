@@ -10,7 +10,10 @@ namespace GolemClientMockAPI.Repository
 
         public string GetNodeForKey(string key)
         {
-            return AppKeys[key];
+            if (AppKeys.ContainsKey(key))
+                return AppKeys[key];
+            else
+                return null;
         }
 
         public void RegisterKeys(KeyDesc[] keys)
