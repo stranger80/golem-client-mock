@@ -280,8 +280,8 @@ namespace GolemMarketMockAPI.Controllers
                 {
                     NodeId = clientContext.NodeId,
                     Constraints = demandProposal.Constraints,
-                    Properties = demandProposal.Properties as Dictionary<string, string>
-                };
+                    Properties = PropertyMappers.MapFromJsonString(demandProposal.Properties?.ToString())
+            };
 
             try
             {

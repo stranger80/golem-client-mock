@@ -199,7 +199,7 @@ namespace GolemMarketMockAPI.Controllers
             {
                 NodeId = clientContext.NodeId,
                 Constraints = offerProposal.Constraints,
-                Properties = offerProposal.Properties as Dictionary<string, string>
+                Properties = PropertyMappers.MapFromJsonString(offerProposal.Properties?.ToString())
             };
 
             try
