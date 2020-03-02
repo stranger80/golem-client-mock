@@ -200,7 +200,8 @@ namespace GolemClientMockAPI.Repository
                     ReceivingSubscriptionId = receivingSubscriptionId,
                     SendingSubscriptionId = sendingSubscriptionId,
                     OfferId = offerProposalId,
-                    Demand = demand
+                    Demand = demand,
+                    State = Proposal.StateEnum.InitialEnum
                 };
 
                 // TODO do we need a lock here???
@@ -226,7 +227,8 @@ namespace GolemClientMockAPI.Repository
                     ReceivingSubscriptionId = receivingSubscriptionId,
                     SendingSubscriptionId = sendingSubscriptionId,
                     DemandId = demandId,
-                    Offer = offer
+                    Offer = offer,
+                    State = Proposal.StateEnum.InitialEnum
                 };
 
                 this.SubscriptionProposals[receivingSubscriptionId].Add(offerProposal);

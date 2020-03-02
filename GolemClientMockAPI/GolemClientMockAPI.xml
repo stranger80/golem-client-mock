@@ -969,6 +969,15 @@
             SubscriptionId of the receiver (required to identify the receiving pipeline)
             </summary>
         </member>
+        <member name="T:GolemClientMockAPI.Entities.Proposal.StateEnum">
+            <summary>
+            * `Initial` - proposal arrived from the market as response to subscription
+            * `Draft` - bespoke counter-proposal issued by one party directly to other party (negotiation phase)
+            * `Rejected` by other party
+            * `Accepted` - promoted into the Agreement draft
+            * `Expired` - not accepted nor rejected before validity period 
+            </summary>
+        </member>
         <member name="M:GolemClientMockAPI.Mappers.PropertyMappers.ProcessJProperty(System.String,Newtonsoft.Json.Linq.JProperty,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Recursive traversal of json structure to extract properties.
