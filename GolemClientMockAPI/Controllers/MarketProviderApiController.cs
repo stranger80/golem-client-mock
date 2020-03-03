@@ -111,7 +111,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(410, new ErrorMessage() { });
             }
 
-            return StatusCode(204);
+            return StatusCode(200, agreementEntity.State.ToString());
         }
 
         /// <summary>
