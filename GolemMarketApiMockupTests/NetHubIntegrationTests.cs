@@ -71,7 +71,7 @@ namespace GolemMarketApiMockupTests
             this.NetHubProcessor.SendMessage(message);
 
 
-            var receivedMessages = await this.NetHubProcessor.CollectMessagesAsync(nodeId2, 1000);
+            var receivedMessages = await this.NetHubProcessor.CollectMessagesAsync(nodeId2, 1.0f);
 
             Assert.IsNotNull(receivedMessages);
             Assert.IsTrue(receivedMessages.Count == 1);

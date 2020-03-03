@@ -35,7 +35,7 @@ namespace GolemClientMockAPI.Processors.Operations
                     var receivingOfferSubscription = this.ProviderEventPipelines[this.OfferSubscriptions[offerProposalId]].Subscription;
 
                     // 2. Persist the demand proposal
-                    var demandProposal = this.ProposalRepository.SaveDemandProposal(receivingOfferSubscription.Id, demandSubscriptionId, demand, offerProposalId);
+                    var demandProposal = this.ProposalRepository.SaveDemandProposal(receivingOfferSubscription.Id, demandSubscriptionId, demand, offerProposalId, Proposal.StateEnum.DraftEnum);
 
                     this.DemandSubscriptions.Add(demandProposal.Id, demandSubscriptionId);
 

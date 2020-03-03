@@ -63,7 +63,7 @@ namespace GolemMarketApiMockupTests
 
             var activity = this.RequestorProcessor.CreateActivity(agreement.Id);
 
-            var provEvents = await this.ProviderProcessor.CollectActivityEventsAsync(offer.Offer.NodeId, 1000);
+            var provEvents = await this.ProviderProcessor.CollectActivityEventsAsync(offer.Offer.NodeId, 1.0f);
 
             // 2. Send a sample ExeScript command batch
 
@@ -77,7 +77,7 @@ namespace GolemMarketApiMockupTests
 
                 do
                 {
-                    provEvents = await this.ProviderProcessor.CollectActivityEventsAsync(offer.Offer.NodeId, 1000);
+                    provEvents = await this.ProviderProcessor.CollectActivityEventsAsync(offer.Offer.NodeId, 1.0f);
 
                     foreach(var provEvent in provEvents)
                     {
@@ -129,7 +129,7 @@ namespace GolemMarketApiMockupTests
             bool isActivityFinished = false;
             do
             {
-                var reqEvents = await this.RequestorProcessor.GetExecBatchResultsAsync(batchId, 1000);
+                var reqEvents = await this.RequestorProcessor.GetExecBatchResultsAsync(batchId, 1.0f);
 
                 foreach(var reqEvent in reqEvents)
                 {

@@ -215,7 +215,7 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 403, type: typeof(GolemClientMockAPI.ActivityAPI.Models.ProblemDetails), description: "Forbidden")]
         [SwaggerResponse(statusCode: 404, type: typeof(GolemClientMockAPI.ActivityAPI.Models.ProblemDetails), description: "Not Found")]
         [SwaggerResponse(statusCode: 500, type: typeof(ErrorBase), description: "Server Error")]
-        public virtual async Task<IActionResult> GetExecBatchResults([FromRoute][Required]string activityId, [FromRoute][Required]string batchId, [FromQuery]int? timeout)
+        public virtual async Task<IActionResult> GetExecBatchResults([FromRoute][Required]string activityId, [FromRoute][Required]string batchId, [FromQuery]float? timeout)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
@@ -235,7 +235,7 @@ namespace GolemMarketMockAPI.Controllers
 
                 // TODO check batch exists? validate the rights to batch??? 
 
-                var resultsEntity = await this.ActivityProcessor.GetExecBatchResultsAsync(batchId, timeout ?? 30000);
+                var resultsEntity = await this.ActivityProcessor.GetExecBatchResultsAsync(batchId, timeout ?? 30.0f);
 
                 var results = this.ExeScriptMapper.MapResultsFromEntity(resultsEntity);
 

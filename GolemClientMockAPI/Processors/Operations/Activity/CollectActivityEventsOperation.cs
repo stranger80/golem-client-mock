@@ -18,7 +18,7 @@ namespace GolemClientMockAPI.Processors.Operations.Activity
         {
         }
 
-        public async Task<ICollection<ActivityProviderEvent>> RunAsync(string providerNodeId, int timeout)
+        public async Task<ICollection<ActivityProviderEvent>> RunAsync(string providerNodeId, float timeout)
         {
             var result = new List<ActivityProviderEvent>();
 
@@ -31,7 +31,7 @@ namespace GolemClientMockAPI.Processors.Operations.Activity
             {
                 var pipelineResult = new List<ActivityProviderEvent>();
 
-                if (this.ProviderEventQueues[providerNodeId].TryTake(out ActivityProviderEvent provEvent, timeout))
+                if (this.ProviderEventQueues[providerNodeId].TryTake(out ActivityProviderEvent provEvent, (int)(float)(timeout * 1000)))
                 {
                     pipelineResult.Add(provEvent);
                 }

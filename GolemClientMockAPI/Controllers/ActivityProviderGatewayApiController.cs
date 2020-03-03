@@ -68,13 +68,13 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(List<ProviderEvent>), description: "Success")]
         [SwaggerResponse(statusCode: 403, type: typeof(GolemClientMockAPI.ActivityAPI.Models.ProblemDetails), description: "Forbidden")]
         [SwaggerResponse(statusCode: 500, type: typeof(ErrorBase), description: "Server Error")]
-        public virtual async Task<IActionResult> CollectActivityEvents([FromQuery]int? timeout)
+        public virtual async Task<IActionResult> CollectActivityEvents([FromQuery]float? timeout)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
             try
             {
-                var events = await this.ActivityProcessor.CollectActivityEventsAsync(clientContext.NodeId ,timeout ?? 15000);
+                var events = await this.ActivityProcessor.CollectActivityEventsAsync(clientContext.NodeId ,timeout ?? 15.0f);
 
                 var results = events.Select(ev => this.EventMapper.Map(ev)).ToList();
 

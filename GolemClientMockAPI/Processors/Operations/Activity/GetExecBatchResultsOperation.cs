@@ -18,7 +18,7 @@ namespace GolemClientMockAPI.Processors.Operations.Activity
         {
         }
 
-        public async Task<ICollection<ActivityRequestorEvent>> RunAsync(string exeScriptBatchId, int timeout)
+        public async Task<ICollection<ActivityRequestorEvent>> RunAsync(string exeScriptBatchId, float timeout)
         {
             var result = new List<ActivityRequestorEvent>();
 
@@ -31,7 +31,7 @@ namespace GolemClientMockAPI.Processors.Operations.Activity
             {
                 var pipelineResult = new List<ActivityRequestorEvent>();
 
-                if (this.ExeBatchQueues[exeScriptBatchId].TryTake(out ActivityRequestorEvent reqEvent, timeout))
+                if (this.ExeBatchQueues[exeScriptBatchId].TryTake(out ActivityRequestorEvent reqEvent, (int)(float)(timeout * 1000)))
                 {
                     pipelineResult.Add(reqEvent);
                 }

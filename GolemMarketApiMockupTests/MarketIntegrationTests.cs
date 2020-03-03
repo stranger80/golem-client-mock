@@ -123,7 +123,7 @@ namespace GolemMarketApiMockupTests
 
             // ...at this point in scenario, the Collect on Requestor side should return an offer already...
 
-            var reqEvents = await RequestorProcessor.CollectRequestorEventsAsync(demandSubscription.Id, 1000, 10);
+            var reqEvents = await RequestorProcessor.CollectRequestorEventsAsync(demandSubscription.Id, 1.000f, 10);
 
             var offerProposal = reqEvents.First();
 
@@ -160,14 +160,14 @@ namespace GolemMarketApiMockupTests
 
             // At this point, the Provider should be able to read the Demand Proposal on the Offer subscription
 
-            var provEvents = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 1000, 10);
+            var provEvents = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 1.000f, 10);
 
             Assert.IsTrue(provEvents.Any());
             Assert.AreEqual(counterDemandProposal.Id, provEvents.First().DemandProposal.Id);
             Assert.AreEqual(offerProposal.Id, provEvents.First().DemandProposal.OfferId);
 
             // ...if we call again - there should be no proposals, so a timeout is expected after 100ms
-            var provEvents2 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 100, 10);
+            var provEvents2 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 0.100f, 10);
 
             Assert.IsFalse(provEvents2.Any());
 
@@ -176,7 +176,7 @@ namespace GolemMarketApiMockupTests
             ICollection<MarketRequestorEvent> reqEvents2 = null;
             Task.Run(async () =>
             {
-                reqEvents2 = await RequestorProcessor.CollectRequestorEventsAsync(demandSubscription.Id, 5000, 10);
+                reqEvents2 = await RequestorProcessor.CollectRequestorEventsAsync(demandSubscription.Id, 5.000f, 10);
 
                 Assert.IsTrue(reqEvents2.Any());
             });
@@ -247,7 +247,7 @@ namespace GolemMarketApiMockupTests
             AgreementResultEnum? agreementResponse = null;
             Task.Run(async () =>
             {
-                agreementResponse = await RequestorProcessor.ConfirmAgreementAsync(agreement.Id, 5000);
+                agreementResponse = await RequestorProcessor.ConfirmAgreementAsync(agreement.Id, 5.000f);
 
                 Assert.IsNotNull(agreementResponse);
             });
@@ -255,7 +255,7 @@ namespace GolemMarketApiMockupTests
 
             // ...in the meantime - collect the Agreement proposal on Provider side and send response
 
-            var provEvents3 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 100000, 10);
+            var provEvents3 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 100.000f, 10);
 
             Assert.IsTrue(provEvents3.Any());
             var receivedAgreementProposal = provEvents3.First();
@@ -299,7 +299,7 @@ namespace GolemMarketApiMockupTests
             AgreementResultEnum? agreementResponse = null;
             Task.Run(async () =>
             {
-                agreementResponse = await RequestorProcessor.ConfirmAgreementAsync(agreement.Id, 5000);
+                agreementResponse = await RequestorProcessor.ConfirmAgreementAsync(agreement.Id, 5.000f);
 
                 Assert.IsNotNull(agreementResponse);
             });
@@ -307,7 +307,7 @@ namespace GolemMarketApiMockupTests
 
             // ...in the meantime - collect the Agreement proposal on Provider side and send response
 
-            var provEvents3 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 100000, 10);
+            var provEvents3 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 100.000f, 10);
 
             Assert.IsTrue(provEvents3.Any());
             var receivedAgreementProposal = provEvents3.First();
@@ -351,7 +351,7 @@ namespace GolemMarketApiMockupTests
             AgreementResultEnum? agreementResponse = null;
             Task.Run(async () =>
             {
-                agreementResponse = await RequestorProcessor.ConfirmAgreementAsync(agreement.Id, 5000);
+                agreementResponse = await RequestorProcessor.ConfirmAgreementAsync(agreement.Id, 5.000f);
 
                 Assert.IsNotNull(agreementResponse);
             });
@@ -362,7 +362,7 @@ namespace GolemMarketApiMockupTests
 
             // ...in the meantime - collect the Agreement proposal on Provider side and send response
 
-            var provEvents3 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 100000, 10);
+            var provEvents3 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 100.000f, 10);
 
             // TODO in Cancel implementation...
             // If Agreement Proposal hasn't been yet collected - simply remove it from pipeline
