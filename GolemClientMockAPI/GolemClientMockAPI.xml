@@ -969,6 +969,15 @@
             SubscriptionId of the receiver (required to identify the receiving pipeline)
             </summary>
         </member>
+        <member name="T:GolemClientMockAPI.Entities.Proposal.StateEnum">
+            <summary>
+            * `Initial` - proposal arrived from the market as response to subscription
+            * `Draft` - bespoke counter-proposal issued by one party directly to other party (negotiation phase)
+            * `Rejected` by other party
+            * `Accepted` - promoted into the Agreement draft
+            * `Expired` - not accepted nor rejected before validity period 
+            </summary>
+        </member>
         <member name="M:GolemClientMockAPI.Mappers.PropertyMappers.ProcessJProperty(System.String,Newtonsoft.Json.Linq.JProperty,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Recursive traversal of json structure to extract properties.
@@ -1160,7 +1169,7 @@
             <param name="offerProposalId"></param>
             <returns></returns>
         </member>
-        <member name="M:GolemClientMockAPI.Repository.IProposalRepository.SaveDemandProposal(System.String,System.String,GolemClientMockAPI.Entities.Demand,System.String)">
+        <member name="M:GolemClientMockAPI.Repository.IProposalRepository.SaveDemandProposal(System.String,System.String,GolemClientMockAPI.Entities.Demand,System.String,GolemClientMockAPI.Entities.Proposal.StateEnum)">
             <summary>
             Persists a Demand Proposal.
             </summary>
@@ -1169,7 +1178,7 @@
             <param name="offerId">If this Demand Proposal is a counter-proposal to a specific Offer, put OfferId here.</param>
             <returns></returns>
         </member>
-        <member name="M:GolemClientMockAPI.Repository.IProposalRepository.SaveOfferProposal(System.String,System.String,GolemClientMockAPI.Entities.Offer,System.String)">
+        <member name="M:GolemClientMockAPI.Repository.IProposalRepository.SaveOfferProposal(System.String,System.String,GolemClientMockAPI.Entities.Offer,System.String,GolemClientMockAPI.Entities.Proposal.StateEnum)">
             <summary>
             Persists an Offer Proposal.
             </summary>
@@ -1471,12 +1480,13 @@
             
             </summary>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.ApproveAgreement(System.String)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.ApproveAgreement(System.String,System.Nullable{System.Int32})">
             <summary>
             Approves Agreement proposed by the Reqestor.
             </summary>
-            <remarks>This is a blocking operation.  It returns one of the following options: * &#x60;Ok&#x60; - Indicates that the approved Agreement has been successfully delivered to the Requestor and acknowledged.   - The Requestor side has been notified about the Provider’s commitment     to the Agreement.   - The Provider is now ready to accept a request to start an Activity     as described in the negotiated agreement.   - The Requestor’s corresponding ConfirmAgreement call returns Ok after     the one on the Provider side.  * &#x60;Cancelled&#x60; - Indicates that before delivering the approved Agreement, the Requestor has called &#x60;cancelAgreement&#x60;, thus invalidating the Agreement. The Provider may attempt to return to the Negotiation phase by sending a new Proposal.  **Note**: It is expected from the Provider node implementation to “ring-fence” the resources required to fulfill the Agreement before the ApproveAgreement is sent. However, the resources should not be fully committed until &#x60;Ok&#x60; response is received from the &#x60;approveAgreement&#x60; call.  **Note**: Mutually exclusive with &#x60;rejectAgreement&#x60;. </remarks>
+            <remarks>This is a blocking operation.  It returns one of the following options: * &#x60;Ok&#x60; - Indicates that the approved Agreement has been successfully delivered to the Requestor and acknowledged.   - The Requestor side has been notified about the Provider's commitment     to the Agreement.   - The Provider is now ready to accept a request to start an Activity     as described in the negotiated agreement.   - The Requestor's corresponding ConfirmAgreement call returns Ok after     the one on the Provider side.  * &#x60;Cancelled&#x60; - Indicates that before delivering the approved Agreement, the Requestor has called &#x60;cancelAgreement&#x60;, thus invalidating the Agreement. The Provider may attempt to return to the Negotiation phase by sending a new Proposal.  **Note**: It is expected from the Provider node implementation to "ring-fence" the resources required to fulfill the Agreement before the ApproveAgreement is sent. However, the resources should not be fully committed until &#x60;Ok&#x60; response is received from the &#x60;approveAgreement&#x60; call.  **Note**: Mutually exclusive with &#x60;rejectAgreement&#x60;. </remarks>
             <param name="agreementId"></param>
+            <param name="timeout"></param>
             <response code="204">Agreement approved.</response>
             <response code="401">Authorization information is missing or invalid.</response>
             <response code="404">The specified resource was not found.</response>
@@ -1537,7 +1547,7 @@
             <summary>
             Handles dynamic property query.
             </summary>
-            <remarks>The Market Matching Mechanism, when resolving the match relation for the specific Demand-Offer pair, is to detect the “dynamic” properties required (via constraints) by the other side. At this point, it is able to query the issuing node for those properties and submit the other side’s requested properties as the context of the query.  **Note**: The property query responses may be submitted in “chunks”, ie. the responder may choose to resolve ‘quick’/lightweight’ properties faster and provide response sooner, while still working on more time-consuming properties in the background. Therefore the response contains both the resolved properties, as well as list of properties which responder knows still require resolution.  **Note**: This method must be implemented for Market API Capability Level 2. </remarks>
+            <remarks>The Market Matching Mechanism, when resolving the match relation for the specific Demand-Offer pair, is to detect the "dynamic" properties required (via constraints) by the other side. At this point, it is able to query the issuing node for those properties and submit the other side's requested properties as the context of the query.  **Note**: The property query responses may be submitted in "chunks", ie. the responder may choose to resolve "quick"/lightweight" properties faster and provide response sooner, while still working on more time-consuming properties in the background. Therefore the response contains both the resolved properties, as well as list of properties which responder knows still require resolution.  **Note**: This method must be implemented for Market API Capability Level 2. </remarks>
             <param name="body"></param>
             <param name="subscriptionId"></param>
             <param name="queryId"></param>
@@ -1551,7 +1561,7 @@
             <summary>
             Rejects Agreement proposed by the Requestor.
             </summary>
-            <remarks>The Requestor side is notified about the Provider’s decision to reject a negotiated agreement. This effectively stops the Agreement handshake.  **Note**: Mutually exclusive with &#x60;approveAgreement&#x60;. </remarks>
+            <remarks>The Requestor side is notified about the Provider's decision to reject a negotiated agreement. This effectively stops the Agreement handshake.  **Note**: Mutually exclusive with &#x60;approveAgreement&#x60;. </remarks>
             <param name="agreementId"></param>
             <response code="204">Agreement rejected.</response>
             <response code="401">Authorization information is missing or invalid.</response>
@@ -2185,48 +2195,43 @@
             </summary>
             <returns>Hash code</returns>
         </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.Error">
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Error.Code">
-            <summary>
-            Gets or Sets Code
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Error.Message">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.Message">
             <summary>
             Gets or Sets Message
             </summary>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.ToString">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.ToString">
             <summary>
             Returns the string presentation of the object
             </summary>
             <returns>String presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.ToJson">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.ToJson">
             <summary>
             Returns the JSON string presentation of the object
             </summary>
             <returns>JSON string presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.Equals(System.Object)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.Equals(System.Object)">
             <summary>
             Returns true if objects are equal
             </summary>
             <param name="obj">Object to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.Equals(GolemMarketMockAPI.MarketAPI.Models.Error)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.Equals(GolemMarketMockAPI.MarketAPI.Models.ErrorMessage)">
             <summary>
             Returns true if Error instances are equal
             </summary>
             <param name="other">Instance of Error to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.GetHashCode">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.GetHashCode">
             <summary>
             Gets the hash code
             </summary>

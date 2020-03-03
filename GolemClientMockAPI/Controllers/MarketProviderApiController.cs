@@ -71,8 +71,9 @@ namespace GolemMarketMockAPI.Controllers
         /// <summary>
         /// Approves Agreement proposed by the Reqestor.
         /// </summary>
-        /// <remarks>This is a blocking operation.  It returns one of the following options: * &#x60;Ok&#x60; - Indicates that the approved Agreement has been successfully delivered to the Requestor and acknowledged.   - The Requestor side has been notified about the Provider’s commitment     to the Agreement.   - The Provider is now ready to accept a request to start an Activity     as described in the negotiated agreement.   - The Requestor’s corresponding ConfirmAgreement call returns Ok after     the one on the Provider side.  * &#x60;Cancelled&#x60; - Indicates that before delivering the approved Agreement, the Requestor has called &#x60;cancelAgreement&#x60;, thus invalidating the Agreement. The Provider may attempt to return to the Negotiation phase by sending a new Proposal.  **Note**: It is expected from the Provider node implementation to “ring-fence” the resources required to fulfill the Agreement before the ApproveAgreement is sent. However, the resources should not be fully committed until &#x60;Ok&#x60; response is received from the &#x60;approveAgreement&#x60; call.  **Note**: Mutually exclusive with &#x60;rejectAgreement&#x60;. </remarks>
+        /// <remarks>This is a blocking operation.  It returns one of the following options: * &#x60;Ok&#x60; - Indicates that the approved Agreement has been successfully delivered to the Requestor and acknowledged.   - The Requestor side has been notified about the Provider's commitment     to the Agreement.   - The Provider is now ready to accept a request to start an Activity     as described in the negotiated agreement.   - The Requestor's corresponding ConfirmAgreement call returns Ok after     the one on the Provider side.  * &#x60;Cancelled&#x60; - Indicates that before delivering the approved Agreement, the Requestor has called &#x60;cancelAgreement&#x60;, thus invalidating the Agreement. The Provider may attempt to return to the Negotiation phase by sending a new Proposal.  **Note**: It is expected from the Provider node implementation to "ring-fence" the resources required to fulfill the Agreement before the ApproveAgreement is sent. However, the resources should not be fully committed until &#x60;Ok&#x60; response is received from the &#x60;approveAgreement&#x60; call.  **Note**: Mutually exclusive with &#x60;rejectAgreement&#x60;. </remarks>
         /// <param name="agreementId"></param>
+        /// <param name="timeout"></param>
         /// <response code="204">Agreement approved.</response>
         /// <response code="401">Authorization information is missing or invalid.</response>
         /// <response code="404">The specified resource was not found.</response>
@@ -83,10 +84,10 @@ namespace GolemMarketMockAPI.Controllers
         [Route("/market-api/v1/agreements/{agreementId}/approve")]
         [ValidateModelState]
         [SwaggerOperation("ApproveAgreement")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
-        public virtual IActionResult ApproveAgreement([FromRoute][Required]string agreementId)
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
+        public virtual IActionResult ApproveAgreement([FromRoute][Required]string agreementId, [FromQuery]int? timeout)
         { 
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
@@ -95,22 +96,22 @@ namespace GolemMarketMockAPI.Controllers
 
             if (agreement == null)
             {
-                return StatusCode(404, new Error() { }); // Not Found
+                return StatusCode(404, new ErrorMessage() { }); // Not Found
             }
 
             if (clientContext.NodeId != agreement.OfferProposal.Offer.NodeId)
             {
-                return StatusCode(401, new Error() { }); // Unauthorized
+                return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
-            var agreementEntity = this.MarketProcessor.ApproveAgreement(agreementId);
+            var agreementEntity = this.MarketProcessor.ApproveAgreement(agreementId); // TODO: , timeout ?? 10000);
 
             if(agreementEntity.State == GolemClientMockAPI.Entities.AgreementState.Cancelled)
             {
-                return StatusCode(410, new Error() { });
+                return StatusCode(410, new ErrorMessage() { });
             }
 
-            return StatusCode(204);
+            return StatusCode(200, agreementEntity.State.ToString());
         }
 
         /// <summary>
@@ -129,9 +130,9 @@ namespace GolemMarketMockAPI.Controllers
         [ValidateModelState]
         [SwaggerOperation("CollectDemands")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Event>), description: "Proposal or Agreement event list.")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual async Task<IActionResult> CollectDemands([FromRoute][Required]string subscriptionId, [FromQuery]int? timeout, [FromQuery]int? maxEvents)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
@@ -140,12 +141,12 @@ namespace GolemMarketMockAPI.Controllers
 
             if (subscription == null)
             {
-                return StatusCode(404, new Error() { }); // Not Found
+                return StatusCode(404, new ErrorMessage() { }); // Not Found
             }
 
             if (clientContext.NodeId != subscription.Offer.NodeId)
             {
-                return StatusCode(401, new Error() { }); // Unauthorized
+                return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
             var events = await this.MarketProcessor.CollectProviderEventsAsync(subscriptionId, timeout, (int?)maxEvents);
@@ -175,10 +176,10 @@ namespace GolemMarketMockAPI.Controllers
         [ValidateModelState]
         [SwaggerOperation("CreateProposalOffer")]
         [SwaggerResponse(statusCode: 201, type: typeof(string), description: "Counter Proposal created.")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "Bad request.")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 400, type: typeof(ErrorMessage), description: "Bad request.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult CreateProposalOffer([FromBody]Proposal offerProposal, [FromRoute][Required]string subscriptionId, [FromRoute][Required]string proposalId)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
@@ -187,12 +188,12 @@ namespace GolemMarketMockAPI.Controllers
 
             if (subscription == null)
             {
-                return StatusCode(404, new Error() { }); // Not Found
+                return StatusCode(404, new ErrorMessage() { }); // Not Found
             }
 
             if (clientContext.NodeId != subscription.Offer.NodeId)
             {
-                return StatusCode(401, new Error() { }); // Unauthorized
+                return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
             var offerEntity = new GolemClientMockAPI.Entities.Offer()
@@ -210,7 +211,7 @@ namespace GolemMarketMockAPI.Controllers
             }
             catch (Exception exc)
             {
-                return StatusCode(404, new Error() { }); // Not Found
+                return StatusCode(404, new ErrorMessage() { Message = $"creating offer proposal: {proposalId}, {offerEntity} error: {exc.Message}" }); // Not Found
             }
         }
 
@@ -263,9 +264,9 @@ namespace GolemMarketMockAPI.Controllers
         [ValidateModelState]
         [SwaggerOperation("GetProposalDemand")]
         [SwaggerResponse(statusCode: 200, type: typeof(Proposal), description: "Proposal.")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult GetProposalDemand([FromRoute][Required]string subscriptionId, [FromRoute][Required]string proposalId)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
@@ -274,19 +275,19 @@ namespace GolemMarketMockAPI.Controllers
 
             if (subscription == null)
             {
-                return StatusCode(404, new Error() { }); // Not Found
+                return StatusCode(404, new ErrorMessage() { }); // Not Found
             }
 
             if (clientContext.NodeId != subscription.Offer.NodeId)
             {
-                return StatusCode(401, new Error() { }); // Unauthorized
+                return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
             var demandProposal = this.ProposalRepository.GetDemandProposals(subscriptionId).Where(prop => prop.Id == proposalId).FirstOrDefault();
 
             if (demandProposal == null)
             {
-                return StatusCode(404, new Error() { }); // Not Found
+                return StatusCode(404, new ErrorMessage() { }); // Not Found
             }
 
             var offerProposal = (demandProposal.OfferId == null) ?
@@ -301,7 +302,7 @@ namespace GolemMarketMockAPI.Controllers
         /// <summary>
         /// Handles dynamic property query.
         /// </summary>
-        /// <remarks>The Market Matching Mechanism, when resolving the match relation for the specific Demand-Offer pair, is to detect the “dynamic” properties required (via constraints) by the other side. At this point, it is able to query the issuing node for those properties and submit the other side’s requested properties as the context of the query.  **Note**: The property query responses may be submitted in “chunks”, ie. the responder may choose to resolve ‘quick’/lightweight’ properties faster and provide response sooner, while still working on more time-consuming properties in the background. Therefore the response contains both the resolved properties, as well as list of properties which responder knows still require resolution.  **Note**: This method must be implemented for Market API Capability Level 2. </remarks>
+        /// <remarks>The Market Matching Mechanism, when resolving the match relation for the specific Demand-Offer pair, is to detect the "dynamic" properties required (via constraints) by the other side. At this point, it is able to query the issuing node for those properties and submit the other side's requested properties as the context of the query.  **Note**: The property query responses may be submitted in "chunks", ie. the responder may choose to resolve "quick"/lightweight" properties faster and provide response sooner, while still working on more time-consuming properties in the background. Therefore the response contains both the resolved properties, as well as list of properties which responder knows still require resolution.  **Note**: This method must be implemented for Market API Capability Level 2. </remarks>
         /// <param name="body"></param>
         /// <param name="subscriptionId"></param>
         /// <param name="queryId"></param>
@@ -314,26 +315,26 @@ namespace GolemMarketMockAPI.Controllers
         [Route("/market-api/v1/offers/{subscriptionId}/propertyQuery/{queryId}")]
         [ValidateModelState]
         [SwaggerOperation("PostQueryReplyOffers")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "Bad request.")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 400, type: typeof(ErrorMessage), description: "Bad request.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult PostQueryReplyOffers([FromBody]PropertyQueryReply body, [FromRoute][Required]string subscriptionId, [FromRoute][Required]string queryId)
         { 
             //TODO: Uncomment the next line to return response 204 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(204);
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(Error));
+            // return StatusCode(400, default(ErrorMessage));
 
             //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401, default(Error));
+            // return StatusCode(401, default(ErrorMessage));
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404, default(Error));
+            // return StatusCode(404, default(ErrorMessage));
 
             //TODO: Uncomment the next line to return response 0 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(0, default(Error));
+            // return StatusCode(0, default(ErrorMessage));
 
             throw new NotImplementedException();
         }
@@ -341,7 +342,7 @@ namespace GolemMarketMockAPI.Controllers
         /// <summary>
         /// Rejects Agreement proposed by the Requestor.
         /// </summary>
-        /// <remarks>The Requestor side is notified about the Provider’s decision to reject a negotiated agreement. This effectively stops the Agreement handshake.  **Note**: Mutually exclusive with &#x60;approveAgreement&#x60;. </remarks>
+        /// <remarks>The Requestor side is notified about the Provider's decision to reject a negotiated agreement. This effectively stops the Agreement handshake.  **Note**: Mutually exclusive with &#x60;approveAgreement&#x60;. </remarks>
         /// <param name="agreementId"></param>
         /// <response code="204">Agreement rejected.</response>
         /// <response code="401">Authorization information is missing or invalid.</response>
@@ -353,9 +354,9 @@ namespace GolemMarketMockAPI.Controllers
         [Route("/market-api/v1/agreements/{agreementId}/reject")]
         [ValidateModelState]
         [SwaggerOperation("RejectAgreement")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult RejectAgreement([FromRoute][Required]string agreementId)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
@@ -365,12 +366,12 @@ namespace GolemMarketMockAPI.Controllers
 
             if (agreement == null)
             {
-                return StatusCode(404, new Error() { }); // Not Found
+                return StatusCode(404, new ErrorMessage() { }); // Not Found
             }
 
             if (clientContext.NodeId != agreement.OfferProposal.Offer.NodeId)
             {
-                return StatusCode(401, new Error() { }); // Unauthorized
+                return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
             this.MarketProcessor.RejectAgreement(agreementId);
@@ -393,25 +394,25 @@ namespace GolemMarketMockAPI.Controllers
         [Route("/market-api/v1/offers/{subscriptionId}/proposals/{proposalId}")]
         [ValidateModelState]
         [SwaggerOperation("RejectProposalDemand")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult RejectProposalDemand([FromRoute][Required]string subscriptionId, [FromRoute][Required]string proposalId)
         { 
             //TODO: Uncomment the next line to return response 204 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(204);
 
             //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401, default(Error));
+            // return StatusCode(401, default(ErrorMessage));
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404, default(Error));
+            // return StatusCode(404, default(ErrorMessage));
 
             //TODO: Uncomment the next line to return response 410 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(410);
 
             //TODO: Uncomment the next line to return response 0 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(0, default(Error));
+            // return StatusCode(0, default(ErrorMessage));
 
             throw new NotImplementedException();
         }
@@ -430,9 +431,9 @@ namespace GolemMarketMockAPI.Controllers
         [ValidateModelState]
         [SwaggerOperation("SubscribeOffer")]
         [SwaggerResponse(statusCode: 201, type: typeof(string), description: "Subscribed.")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "Bad request.")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 400, type: typeof(ErrorMessage), description: "Bad request.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult SubscribeOffer([FromBody]Offer body) 
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
@@ -462,9 +463,9 @@ namespace GolemMarketMockAPI.Controllers
         [Route("/market-api/v1/offers/{subscriptionId}")]
         [ValidateModelState]
         [SwaggerOperation("UnsubscribeOffer")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult UnsubscribeOffer([FromRoute][Required]string subscriptionId)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
@@ -473,12 +474,12 @@ namespace GolemMarketMockAPI.Controllers
 
             if (subscription == null)
             {
-                return StatusCode(404, new Error() { }); // Not Found
+                return StatusCode(404, new ErrorMessage() { }); // Not Found
             }
 
             if (clientContext.NodeId != subscription.Offer.NodeId)
             {
-                return StatusCode(401, new Error() { }); // Unauthorized
+                return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
             this.MarketProcessor.UnsubscribeOffer(subscriptionId);

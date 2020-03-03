@@ -81,9 +81,9 @@ namespace GolemMarketMockAPI.Controllers
         [ValidateModelState]
         [SwaggerOperation("GetAgreement")]
         [SwaggerResponse(statusCode: 200, type: typeof(Agreement), description: "Agreement.")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult GetAgreement([FromRoute][Required]string agreementId)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
@@ -128,19 +128,19 @@ namespace GolemMarketMockAPI.Controllers
         [Route("/market-api/v1/agreements/{agreementId}/terminate")]
         [ValidateModelState]
         [SwaggerOperation("TerminateAgreement")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
         public virtual IActionResult TerminateAgreement([FromRoute][Required]string agreementId)
         { 
             //TODO: Uncomment the next line to return response 204 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(204);
 
             //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401, default(Error));
+            // return StatusCode(401, default(ErrorMessage));
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404, default(Error));
+            // return StatusCode(404, default(ErrorMessage));
 
             //TODO: Uncomment the next line to return response 409 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(409);
@@ -149,7 +149,7 @@ namespace GolemMarketMockAPI.Controllers
             // return StatusCode(410);
 
             //TODO: Uncomment the next line to return response 0 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(0, default(Error));
+            // return StatusCode(0, default(ErrorMessage));
 
             throw new NotImplementedException();
         }

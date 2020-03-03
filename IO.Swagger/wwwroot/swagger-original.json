@@ -490,6 +490,12 @@
           "in" : "path",
           "required" : true,
           "type" : "string"
+        }, {
+          "name" : "timeout",
+          "in" : "query",
+          "required" : false,
+          "type" : "number",
+          "format" : "float"
         } ],
         "responses" : {
           "200" : {
@@ -507,6 +513,12 @@
           "in" : "path",
           "required" : true,
           "type" : "string"
+        }, {
+          "name" : "timeout",
+          "in" : "query",
+          "required" : false,
+          "type" : "number",
+          "format" : "float"
         } ],
         "responses" : {
           "200" : {
