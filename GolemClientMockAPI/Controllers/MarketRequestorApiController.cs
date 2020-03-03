@@ -529,7 +529,7 @@ namespace GolemMarketMockAPI.Controllers
             }
 
 
-            var result = await this.MarketProcessor.WaitConfirmAgreementResponseAsync(agreementId, 10000);
+            var result = await this.MarketProcessor.WaitConfirmAgreementResponseAsync(agreementId, timeout ?? 10000);
 
             switch (result)
             {

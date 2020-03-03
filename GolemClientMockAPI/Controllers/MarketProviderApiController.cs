@@ -73,6 +73,7 @@ namespace GolemMarketMockAPI.Controllers
         /// </summary>
         /// <remarks>This is a blocking operation.  It returns one of the following options: * &#x60;Ok&#x60; - Indicates that the approved Agreement has been successfully delivered to the Requestor and acknowledged.   - The Requestor side has been notified about the Provider’s commitment     to the Agreement.   - The Provider is now ready to accept a request to start an Activity     as described in the negotiated agreement.   - The Requestor’s corresponding ConfirmAgreement call returns Ok after     the one on the Provider side.  * &#x60;Cancelled&#x60; - Indicates that before delivering the approved Agreement, the Requestor has called &#x60;cancelAgreement&#x60;, thus invalidating the Agreement. The Provider may attempt to return to the Negotiation phase by sending a new Proposal.  **Note**: It is expected from the Provider node implementation to “ring-fence” the resources required to fulfill the Agreement before the ApproveAgreement is sent. However, the resources should not be fully committed until &#x60;Ok&#x60; response is received from the &#x60;approveAgreement&#x60; call.  **Note**: Mutually exclusive with &#x60;rejectAgreement&#x60;. </remarks>
         /// <param name="agreementId"></param>
+        /// <param name="timeout"></param>
         /// <response code="204">Agreement approved.</response>
         /// <response code="401">Authorization information is missing or invalid.</response>
         /// <response code="404">The specified resource was not found.</response>
@@ -86,7 +87,7 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
         [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
         [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
-        public virtual IActionResult ApproveAgreement([FromRoute][Required]string agreementId)
+        public virtual IActionResult ApproveAgreement([FromRoute][Required]string agreementId, [FromQuery]int? timeout)
         { 
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
@@ -103,7 +104,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
-            var agreementEntity = this.MarketProcessor.ApproveAgreement(agreementId);
+            var agreementEntity = this.MarketProcessor.ApproveAgreement(agreementId); // TODO: , timeout ?? 10000);
 
             if(agreementEntity.State == GolemClientMockAPI.Entities.AgreementState.Cancelled)
             {
