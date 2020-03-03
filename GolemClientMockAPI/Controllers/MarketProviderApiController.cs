@@ -227,9 +227,9 @@ namespace GolemMarketMockAPI.Controllers
         [ValidateModelState]
         [SwaggerOperation("GetOffers")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<>), description: "Offer list.")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "Bad request.")]
-        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        [SwaggerResponse(statusCode: 400, type: typeof(ErrorMessage), description: "Bad request.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected ErrorMessage.")]
         public virtual IActionResult GetOffers()
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
@@ -244,7 +244,7 @@ namespace GolemMarketMockAPI.Controllers
             }
             catch (Exception exc)
             {
-                return StatusCode(0, new Error() { }); // unexpecetd error
+                return StatusCode(0, new ErrorMessage() { }); // unexpecetd ErrorMessage
             }
         }
 
@@ -258,7 +258,7 @@ namespace GolemMarketMockAPI.Controllers
         /// <response code="401">Authorization information is missing or invalid.</response>
         /// <response code="404">The specified resource was not found.</response>
         /// <response code="410">Proposal rejected.</response>
-        /// <response code="0">Unexpected error.</response>
+        /// <response code="0">Unexpected ErrorMessage.</response>
         [HttpGet]
         [Route("/market-api/v1/offers/{subscriptionId}/proposals/{proposalId}")]
         [ValidateModelState]

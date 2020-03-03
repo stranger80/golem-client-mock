@@ -1541,7 +1541,7 @@
             <response code="401">Authorization information is missing or invalid.</response>
             <response code="404">The specified resource was not found.</response>
             <response code="410">Proposal rejected.</response>
-            <response code="0">Unexpected error.</response>
+            <response code="0">Unexpected ErrorMessage.</response>
         </member>
         <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.PostQueryReplyOffers(GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply,System.String,System.String)">
             <summary>
