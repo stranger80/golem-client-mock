@@ -25,7 +25,7 @@ namespace GolemClientMockAPI.Processors
         public IDictionary<string, NodeDescriptor> NodeDescriptorsByNodeIds { get; set; } = new Dictionary<string, NodeDescriptor>();
 
 
-        public Task<ICollection<NetMessage>> CollectMessagesAsync(string collectingNodeId, int timeout)
+        public Task<ICollection<NetMessage>> CollectMessagesAsync(string collectingNodeId, float timeout)
         {
             if (!this.NodeDescriptorsByNodeIds.ContainsKey(collectingNodeId))
                 throw new Exception($"Node [{collectingNodeId}] not registered!");
@@ -38,7 +38,7 @@ namespace GolemClientMockAPI.Processors
                 var result = new List<NetMessage>();
 
                 NetMessage message;
-                if (incomingQueue.TryTake(out message, timeout))
+                if (incomingQueue.TryTake(out message, (int)(float)(timeout * 1000)))
                 {
                     result.Add(message);
                 }

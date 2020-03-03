@@ -90,7 +90,7 @@ namespace GolemClientMockAPI.Processors.Operations
                         {
                             var pipelineResult = new List<MarketProviderEvent>();
 
-                            if (this.AgreementResultPipelines[agreementId].TryTake(out AgreementResultEnum response, (int)timeout))
+                            if (this.AgreementResultPipelines[agreementId].TryTake(out AgreementResultEnum response, (int)(float)(timeout * 1000)))
                             {
                                 return response;
                             }

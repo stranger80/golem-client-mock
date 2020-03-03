@@ -16,6 +16,6 @@ namespace GolemClientMockAPI.Processors
 
         void SendMessage(NetMessage message);
 
-        Task<ICollection<NetMessage>> CollectMessagesAsync(string collectingNodeId, int timeout);
+        Task<ICollection<NetMessage>> CollectMessagesAsync(string collectingNodeId, float timeout);
     }
 }

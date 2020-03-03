@@ -31,7 +31,7 @@ namespace GolemClientMockAPI.Processors
         /// <param name="exeScriptBatchId"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        Task<ICollection<ActivityRequestorEvent>> GetExecBatchResultsAsync(string exeScriptBatchId, int timeout); 
+        Task<ICollection<ActivityRequestorEvent>> GetExecBatchResultsAsync(string exeScriptBatchId, float timeout); 
 
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace GolemClientMockAPI.Processors
         /// <param name="activityId"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        ActivityStateDetails GetStateDetails(string activityId, int timeout);
+        ActivityStateDetails GetStateDetails(string activityId, float timeout);
 
         #endregion
     }

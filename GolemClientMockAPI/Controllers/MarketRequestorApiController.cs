@@ -132,7 +132,7 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
         [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
         [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
-        public virtual async Task<IActionResult> CollectOffers([FromRoute][Required]string subscriptionId, [FromQuery]int? timeout, [FromQuery]int? maxEvents)
+        public virtual async Task<IActionResult> CollectOffers([FromRoute][Required]string subscriptionId, [FromQuery]float? timeout, [FromQuery]int? maxEvents)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
@@ -544,7 +544,7 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
         [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
         [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
-        public async virtual Task<IActionResult> WaitForApproval([FromRoute][Required]string agreementId, [FromQuery]int? timeout)
+        public async virtual Task<IActionResult> WaitForApproval([FromRoute][Required]string agreementId, [FromQuery]float? timeout)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
@@ -562,7 +562,7 @@ namespace GolemMarketMockAPI.Controllers
             }
 
 
-            var result = await this.MarketProcessor.WaitConfirmAgreementResponseAsync(agreementId, timeout ?? 10000);
+            var result = await this.MarketProcessor.WaitConfirmAgreementResponseAsync(agreementId, timeout ?? 10.0f);
 
             switch (result)
             {

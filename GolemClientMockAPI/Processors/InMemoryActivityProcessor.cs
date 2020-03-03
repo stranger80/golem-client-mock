@@ -39,7 +39,7 @@ namespace GolemClientMockAPI.Processors
 
 
         #region Provider operations
-        public Task<ICollection<ActivityProviderEvent>> CollectActivityEventsAsync(string providerNodeId, int timeout)
+        public Task<ICollection<ActivityProviderEvent>> CollectActivityEventsAsync(string providerNodeId, float timeout)
         {
             return new CollectActivityEventsOperation(
                     this.AgreementRepository,
@@ -99,7 +99,7 @@ namespace GolemClientMockAPI.Processors
                 .Run(activityId, exeScript);
         }
 
-        public Task<ICollection<ActivityRequestorEvent>> GetExecBatchResultsAsync(string exeScriptBatchId, int timeout)
+        public Task<ICollection<ActivityRequestorEvent>> GetExecBatchResultsAsync(string exeScriptBatchId, float timeout)
         {
             return new GetExecBatchResultsOperation(
                     this.AgreementRepository,
@@ -108,7 +108,7 @@ namespace GolemClientMockAPI.Processors
                 .RunAsync(exeScriptBatchId, timeout);
         }
 
-        public ActivityStateDetails GetStateDetails(string activityId, int timeout)
+        public ActivityStateDetails GetStateDetails(string activityId, float timeout)
         {
             new GetOperation(
                 this.AgreementRepository,
@@ -118,7 +118,7 @@ namespace GolemClientMockAPI.Processors
                     .Run(activityId, ActivityProviderEvent.ActivityProviderEventType.GetState);
 
             // wait for response (and return Unresponsive if timeout)
-            if (this.ActivityEventQueues[activityId].TryTake(out ActivityRequestorEvent reqEvent, timeout))
+            if (this.ActivityEventQueues[activityId].TryTake(out ActivityRequestorEvent reqEvent, (int)(float)(timeout * 1000)))
             {
                 return reqEvent.Details;
             }

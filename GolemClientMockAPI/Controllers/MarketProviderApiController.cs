@@ -87,7 +87,7 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
         [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
         [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
-        public virtual IActionResult ApproveAgreement([FromRoute][Required]string agreementId, [FromQuery]int? timeout)
+        public virtual IActionResult ApproveAgreement([FromRoute][Required]string agreementId, [FromQuery]float? timeout)
         { 
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
@@ -104,7 +104,7 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
-            var agreementEntity = this.MarketProcessor.ApproveAgreement(agreementId); // TODO: , timeout ?? 10000);
+            var agreementEntity = this.MarketProcessor.ApproveAgreement(agreementId); // TODO: , timeout ?? 10.0);
 
             if(agreementEntity.State == GolemClientMockAPI.Entities.AgreementState.Cancelled)
             {
@@ -133,7 +133,7 @@ namespace GolemMarketMockAPI.Controllers
         [SwaggerResponse(statusCode: 401, type: typeof(ErrorMessage), description: "Authorization information is missing or invalid.")]
         [SwaggerResponse(statusCode: 404, type: typeof(ErrorMessage), description: "The specified resource was not found.")]
         [SwaggerResponse(statusCode: 0, type: typeof(ErrorMessage), description: "Unexpected error.")]
-        public virtual async Task<IActionResult> CollectDemands([FromRoute][Required]string subscriptionId, [FromQuery]int? timeout, [FromQuery]int? maxEvents)
+        public virtual async Task<IActionResult> CollectDemands([FromRoute][Required]string subscriptionId, [FromQuery]float? timeout, [FromQuery]int? maxEvents)
         {
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 

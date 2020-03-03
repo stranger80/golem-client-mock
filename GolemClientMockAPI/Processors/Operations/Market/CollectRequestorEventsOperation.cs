@@ -79,7 +79,7 @@ namespace GolemClientMockAPI.Processors.Operations
                     {
                         var pipelineResult = new List<MarketRequestorEvent>();
 
-                        if (pipeline.PipelineQueue.TryTake(out MarketRequestorEvent reqEvent, (int)timeout))
+                        if (pipeline.PipelineQueue.TryTake(out MarketRequestorEvent reqEvent, (int)(float)(timeout * 1000)))
                         {
                             pipelineResult.Add(reqEvent);
                         }
