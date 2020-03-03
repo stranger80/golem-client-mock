@@ -7,3 +7,4 @@
 /*/obj
 /GolemClientMockAPI/Properties/PublishProfiles
 nng.NETCore/runtimes/any/lib/netstandard2.0/*.*
+/specs

@@ -12,40 +12,68 @@ namespace GolemClientMockAPI.Mappers
         {
             // ...from Entities
 
-            CreateMap<Entities.MarketRequestorEvent, GolemMarketMockAPI.MarketAPI.Models.RequestorEvent>()
+            CreateMap<Entities.MarketRequestorEvent, GolemMarketMockAPI.MarketAPI.Models.Event>()
                     .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => EnumMappers.TranslateRequestorEventType(src.EventType)));
 
-            CreateMap<Entities.MarketRequestorEvent, GolemMarketMockAPI.MarketAPI.Models.OfferEvent>()
+            CreateMap<Entities.MarketRequestorEvent, GolemMarketMockAPI.MarketAPI.Models.ProposalEvent>()
                     .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => EnumMappers.TranslateRequestorEventType(src.EventType)))
-                    .ForMember(dest => dest.ProviderId, opt => opt.MapFrom(src => src.OfferProposal.Offer.NodeId))
-                    .ForMember(dest => dest.Offer, opt => opt.MapFrom(src => src.OfferProposal));
+                    .ForMember(dest => dest.Proposal, opt => opt.MapFrom(src => src.OfferProposal));
 
-            CreateMap<Entities.MarketProviderEvent, GolemMarketMockAPI.MarketAPI.Models.ProviderEvent>()
+            CreateMap<Entities.MarketProviderEvent, GolemMarketMockAPI.MarketAPI.Models.Event>()
+                .ForMember(dest => dest.EventDate, opt => opt.MapFrom(src => src.EventDate))
                 .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => EnumMappers.TranslateProviderEventType(src.EventType)));
-            CreateMap<Entities.MarketProviderEvent, GolemMarketMockAPI.MarketAPI.Models.DemandEvent>()
-                    .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => EnumMappers.TranslateProviderEventType(src.EventType)))
-                    .ForMember(dest => dest.RequestorId, opt => opt.MapFrom(src => src.DemandProposal.Demand.NodeId))
-                    .ForMember(dest => dest.Demand, opt => opt.MapFrom(src => src.DemandProposal));
-            CreateMap<Entities.MarketProviderEvent, GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent>()
-                    .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => EnumMappers.TranslateProviderEventType(src.EventType)))
-                    .ForMember(dest => dest.AgreementId, opt => opt.MapFrom(src => src.Agreement.Id))
-                    .ForMember(dest => dest.RequestorId, opt => opt.MapFrom(src => src.Agreement.Demand.NodeId))
-                    .ForMember(dest => dest.ProviderId, opt => opt.MapFrom(src => src.Agreement.Offer.NodeId))
-                    .ForMember(dest => dest.Offer, opt => opt.MapFrom(src => src.Agreement.Offer))
-                    .ForMember(dest => dest.Demand, opt => opt.MapFrom(src => src.Agreement.Demand));
+            CreateMap<Entities.MarketProviderEvent, GolemMarketMockAPI.MarketAPI.Models.ProposalEvent>()
+                .ForMember(dest => dest.EventDate, opt => opt.MapFrom(src => src.EventDate))
+                .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => EnumMappers.TranslateProviderEventType(src.EventType)))
+                .ForMember(dest => dest.Proposal, opt => opt.MapFrom(src => src.DemandProposal));
+            CreateMap<Entities.MarketProviderEvent, GolemMarketMockAPI.MarketAPI.Models.AgreementEvent>()
+                .ForMember(dest => dest.EventDate, opt => opt.MapFrom(src => src.EventDate))
+                .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => EnumMappers.TranslateProviderEventType(src.EventType)))
+                .ForMember(dest => dest.Agreement, opt => opt.MapFrom(src => src.Agreement));
 
+            CreateMap<Entities.Agreement, GolemMarketMockAPI.MarketAPI.Models.Agreement>()
+                .ForMember(dest => dest.Demand, opt => opt.MapFrom(src => src.DemandProposal))
+                .ForMember(dest => dest.Offer, opt => opt.MapFrom(src => src.OfferProposal))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
+                .ForMember(dest => dest.AgreementId, opt => opt.MapFrom(src => src.Id));
 
-            CreateMap<Entities.Demand, GolemMarketMockAPI.MarketAPI.Models.Demand>();
+            CreateMap<Entities.Demand, GolemMarketMockAPI.MarketAPI.Models.Demand>()
+                .ForMember(dest => dest.RequestorId, opt => opt.MapFrom(src => src.NodeId))
+                //.ForMember(dest => dest.DemandId, opt => opt.MapFrom(src => src.Id))
+                ;
+
+            // special map to enable mapping of the Agreement
+            CreateMap<Entities.DemandProposal, GolemMarketMockAPI.MarketAPI.Models.Demand>()
+                .ForMember(dest => dest.RequestorId, opt => opt.MapFrom(src => src.Demand.NodeId))
+                .ForMember(dest => dest.DemandId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Constraints, opt => opt.MapFrom(src => src.Demand.Constraints))
+                .ForMember(dest => dest.Properties, opt => opt.MapFrom(src => src.Demand.Properties))
+                ;
+
             CreateMap<Entities.DemandProposal, GolemMarketMockAPI.MarketAPI.Models.Proposal>()
                 .ForMember(dest => dest.PrevProposalId, opt => opt.MapFrom(src => src.OfferId))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ProposalId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.IssuerId, opt => opt.MapFrom(src => src.Demand.NodeId))
                 .ForMember(dest => dest.Constraints, opt => opt.MapFrom(src => src.Demand.Constraints))
                 .ForMember(dest => dest.Properties, opt => opt.MapFrom(src => src.Demand.Properties));
 
-            CreateMap<Entities.Offer, GolemMarketMockAPI.MarketAPI.Models.Offer>();
+            CreateMap<Entities.Offer, GolemMarketMockAPI.MarketAPI.Models.Offer>()
+                .ForMember(dest => dest.ProviderId, opt => opt.MapFrom(src => src.NodeId))
+                //.ForMember(dest => dest.OfferId, opt => opt.MapFrom(src => src.Id))
+                ;
+
+            // special map to enable mapping of the Agreement
+            CreateMap<Entities.OfferProposal, GolemMarketMockAPI.MarketAPI.Models.Offer>()
+                .ForMember(dest => dest.ProviderId, opt => opt.MapFrom(src => src.Offer.NodeId))
+                .ForMember(dest => dest.OfferId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Constraints, opt => opt.MapFrom(src => src.Offer.Constraints))
+                .ForMember(dest => dest.Properties, opt => opt.MapFrom(src => src.Offer.Properties))
+                ;
+
             CreateMap<Entities.OfferProposal, GolemMarketMockAPI.MarketAPI.Models.Proposal>()
                 .ForMember(dest => dest.PrevProposalId, opt => opt.MapFrom(src => src.DemandId))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ProposalId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.IssuerId, opt => opt.MapFrom(src => src.Offer.NodeId))
                 .ForMember(dest => dest.Constraints, opt => opt.MapFrom(src => src.Offer.Constraints))
                 .ForMember(dest => dest.Properties, opt => opt.MapFrom(src => src.Offer.Properties));
 

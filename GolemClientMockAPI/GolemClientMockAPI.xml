@@ -1222,6 +1222,13 @@
             <param name="subscriptionId"></param>
             <returns>null if Demand Subscription not found.</returns>
         </member>
+        <member name="M:GolemClientMockAPI.Repository.ISubscriptionRepository.GetActiveDemandSubscriptions(System.String)">
+            <summary>
+            Fetch the active Demand Subscriptions for given nodeId.
+            </summary>
+            <param name="nodeId"></param>
+            <returns></returns>
+        </member>
         <member name="M:GolemClientMockAPI.Repository.ISubscriptionRepository.DeleteDemandSubscription(System.String)">
             <summary>
             Remove the Demand subscription.
@@ -1257,6 +1264,13 @@
             </summary>
             <param name="subscriptionId"></param>
             <returns>null if Offer Subscription not found.</returns>
+        </member>
+        <member name="M:GolemClientMockAPI.Repository.ISubscriptionRepository.GetActiveOfferSubscriptions(System.String)">
+            <summary>
+            Fetch the active Offer Subscriptions for given nodeId.
+            </summary>
+            <param name="nodeId"></param>
+            <returns></returns>
         </member>
         <member name="M:GolemClientMockAPI.Repository.ISubscriptionRepository.DeleteOfferSubscription(System.String)">
             <summary>
@@ -1440,6 +1454,18 @@
             <response code="404">The specified resource was not found.</response>
             <response code="0">Unexpected error.</response>
         </member>
+        <member name="M:GolemMarketMockAPI.Controllers.MarketCommonApiController.TerminateAgreement(System.String)">
+            <summary>
+            Terminates approved Agreement.
+            </summary>
+            <param name="agreementId"></param>
+            <response code="204">Agreement terminated.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="409">Agreement not in Approved state.</response>
+            <response code="410">Agreement cancelled by the Requstor.</response>
+            <response code="0">Unexpected error.</response>
+        </member>
         <member name="T:GolemMarketMockAPI.Controllers.MarketProviderApiController">
             <summary>
             
@@ -1447,76 +1473,128 @@
         </member>
         <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.ApproveAgreement(System.String)">
             <summary>
-            
+            Approves Agreement proposed by the Reqestor.
             </summary>
+            <remarks>This is a blocking operation.  It returns one of the following options: * &#x60;Ok&#x60; - Indicates that the approved Agreement has been successfully delivered to the Requestor and acknowledged.   - The Requestor side has been notified about the Provider’s commitment     to the Agreement.   - The Provider is now ready to accept a request to start an Activity     as described in the negotiated agreement.   - The Requestor’s corresponding ConfirmAgreement call returns Ok after     the one on the Provider side.  * &#x60;Cancelled&#x60; - Indicates that before delivering the approved Agreement, the Requestor has called &#x60;cancelAgreement&#x60;, thus invalidating the Agreement. The Provider may attempt to return to the Negotiation phase by sending a new Proposal.  **Note**: It is expected from the Provider node implementation to “ring-fence” the resources required to fulfill the Agreement before the ApproveAgreement is sent. However, the resources should not be fully committed until &#x60;Ok&#x60; response is received from the &#x60;approveAgreement&#x60; call.  **Note**: Mutually exclusive with &#x60;rejectAgreement&#x60;. </remarks>
             <param name="agreementId"></param>
-            <response code="200">OK</response>
+            <response code="204">Agreement approved.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="409">Agreement already rejected.</response>
+            <response code="410">Agreement cancelled by the Requstor.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.Collect(System.String,System.Nullable{System.Single},System.Nullable{System.Int64})">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.CollectDemands(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
-            
+            Reads Market responses to published Offer.
             </summary>
+            <remarks>This is a blocking operation. It will not return until there is at least one new event.  **Note**: When &#x60;collectDemands&#x60; is waiting, simultaneous call to &#x60;unsubscribeOffer&#x60; on the same &#x60;subscriptionId&#x60; should result in \&quot;Subscription does not exist\&quot; error returned from &#x60;collectDemands&#x60;.  **Note**: Specification requires this endpoint to support list of specific Proposal Ids to listen for messages related only to specific Proposals. This is not covered yet. </remarks>
             <param name="subscriptionId"></param>
             <param name="timeout"></param>
             <param name="maxEvents"></param>
-            <response code="200">OK</response>
+            <response code="200">Proposal or Agreement event list.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.CreateProposal(System.String,System.String,GolemMarketMockAPI.MarketAPI.Models.Proposal)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.CreateProposalOffer(GolemMarketMockAPI.MarketAPI.Models.Proposal,System.String,System.String)">
             <summary>
-            Creates agreement proposal
+            Responds with a bespoke Offer to received Demand.
+            </summary>
+            <remarks>Creates and sends a modified version of original Offer (a counter-proposal) adjusted to previously received Proposal (ie. Demand). Changes Proposal state to &#x60;Draft&#x60;. Returns created Proposal id. </remarks>
+            <param name="body"></param>
+            <param name="subscriptionId"></param>
+            <param name="proposalId"></param>
+            <response code="201">Counter Proposal created.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Proposal rejected.</response>
+            <response code="0">Unexpected error.</response>
+        </member>
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.GetOffers">
+            <summary>
+            Fetches all active Offers which have been published by the Provider.
+            </summary>
+            <response code="200">Offer list.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="0">Unexpected error.</response>
+        </member>
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.GetProposalDemand(System.String,System.String)">
+            <summary>
+            Fetches Proposal (Demand) with given id.
             </summary>
             <param name="subscriptionId"></param>
             <param name="proposalId"></param>
-            <param name="proposal"></param>
-            <response code="200">OK</response>
+            <response code="200">Proposal.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Proposal rejected.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.GetProposal(System.String,System.String)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.PostQueryReplyOffers(GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply,System.String,System.String)">
             <summary>
-            Fetches agreement proposal from proposal id.
+            Handles dynamic property query.
             </summary>
-            <param name="subscriptionId"></param>
-            <param name="proposalId"></param>
-            <response code="200">OK</response>
-        </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.QueryResponse(System.String,System.String,GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse)">
-            <summary>
-            
-            </summary>
+            <remarks>The Market Matching Mechanism, when resolving the match relation for the specific Demand-Offer pair, is to detect the “dynamic” properties required (via constraints) by the other side. At this point, it is able to query the issuing node for those properties and submit the other side’s requested properties as the context of the query.  **Note**: The property query responses may be submitted in “chunks”, ie. the responder may choose to resolve ‘quick’/lightweight’ properties faster and provide response sooner, while still working on more time-consuming properties in the background. Therefore the response contains both the resolved properties, as well as list of properties which responder knows still require resolution.  **Note**: This method must be implemented for Market API Capability Level 2. </remarks>
+            <param name="body"></param>
             <param name="subscriptionId"></param>
             <param name="queryId"></param>
-            <param name="propertyValues"></param>
-            <response code="200">OK</response>
+            <response code="204">OK, query reply posted.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="0">Unexpected error.</response>
         </member>
         <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.RejectAgreement(System.String)">
             <summary>
-            Rejects agreement.
+            Rejects Agreement proposed by the Requestor.
             </summary>
+            <remarks>The Requestor side is notified about the Provider’s decision to reject a negotiated agreement. This effectively stops the Agreement handshake.  **Note**: Mutually exclusive with &#x60;approveAgreement&#x60;. </remarks>
             <param name="agreementId"></param>
-            <response code="204">Agreement rejected</response>
+            <response code="204">Agreement rejected.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="409">Agreement already approved.</response>
+            <response code="410">Agreement cancelled by the Requstor.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.RejectProposal(System.String,System.String)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.RejectProposalDemand(System.String,System.String)">
             <summary>
-            Rejects offer
+            Rejects Proposal (Demand).
             </summary>
+            <remarks>Effectively ends a Negotiation chain - it explicitly indicates that the sender will not create another counter-Proposal. </remarks>
             <param name="subscriptionId"></param>
             <param name="proposalId"></param>
-            <response code="204">OK</response>
+            <response code="204">Proposal rejected.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Proposal already rejected.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.Subscribe(GolemMarketMockAPI.MarketAPI.Models.Offer)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.SubscribeOffer(GolemMarketMockAPI.MarketAPI.Models.Offer)">
             <summary>
-            
+            Publishes Provider capabilities via Offer.
             </summary>
-            <param name="body">Offer description</param>
-            <response code="201">OK</response>
-            <response code="400">Bad offer desciption</response>
+            <remarks>Offer object can be considered an \&quot;open\&quot; or public Offer, as it is not directed at a specific Requestor, but rather is sent to the market so that the matching mechanism implementation can associate relevant Demands.  **Note**: it is an \&quot;atomic\&quot; operation, ie. as soon as Subscription is placed, the Offer is published on the market. </remarks>
+            <param name="body"></param>
+            <response code="201">Subscribed.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.Unsubscribe(System.String)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketProviderApiController.UnsubscribeOffer(System.String)">
             <summary>
-            
+            Stop subscription for previously published Offer.
             </summary>
+            <remarks>Stop receiving Proposals.  **Note**: this will terminate all pending &#x60;collectDemands&#x60; calls on this subscription. This implies, that client code should not &#x60;unsubscribeOffer&#x60; before it has received all expected/useful inputs from &#x60;collectDemands&#x60;. </remarks>
             <param name="subscriptionId"></param>
-            <response code="204">Delete</response>
-            <response code="404">Subscription not found</response>
+            <response code="204">Offer revoked.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Already unsubscribed.</response>
+            <response code="0">Unexpected error.</response>
         </member>
         <member name="T:GolemMarketMockAPI.Controllers.MarketRequestorApiController">
             <summary>
@@ -1527,88 +1605,147 @@
             <summary>
             Cancels agreement.
             </summary>
+            <remarks>Causes the awaiting &#x60;waitForApproval&#x60; call to return with &#x60;Cancelled&#x60; response. </remarks>
             <param name="agreementId"></param>
-            <response code="204">Agreement canceled</response>
+            <response code="204">Agreement cancelled.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="409">Agreement already approved.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.Collect(System.String,System.Nullable{System.Single},System.Nullable{System.Int64})">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.CollectOffers(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
-            
+            Reads Market responses to published Demand.
             </summary>
+            <remarks>This is a blocking operation. It will not return until there is at least one new event.  **Note**: When &#x60;collectOffers&#x60; is waiting, simultaneous call to &#x60;unsubscribeDemand&#x60; on the same &#x60;subscriptionId&#x60; should result in \&quot;Subscription does not exist\&quot; error returned from &#x60;collectOffers&#x60;.  **Note**: Specification requires this endpoint to support list of specific Proposal Ids to listen for messages related only to specific Proposals. This is not covered yet. </remarks>
             <param name="subscriptionId"></param>
             <param name="timeout"></param>
             <param name="maxEvents"></param>
-            <response code="200">OK</response>
+            <response code="200">Proposal event list.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="0">Unexpected error.</response>
         </member>
         <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.ConfirmAgreement(System.String)">
             <summary>
-            approves
+            Sends Agreement draft to the Provider.
             </summary>
+            <remarks>Signs Agreement self-created via &#x60;createAgreement&#x60; and sends it to the Provider. </remarks>
             <param name="agreementId"></param>
-            <response code="200">OK</response>
+            <response code="204">Agreement confirmed.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Agreement cancelled.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.CreateAgreement(GolemMarketMockAPI.MarketAPI.Models.Agreement)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.CreateAgreement(GolemMarketMockAPI.MarketAPI.Models.AgreementProposal)">
             <summary>
-            Creates new agreement from proposal
+            Creates Agreement from selected Proposal.
             </summary>
-            <param name="agreement"></param>
-            <response code="201">Created</response>
+            <remarks>Initiates the Agreement handshake phase.  Formulates an Agreement artifact from the Proposal indicated by the received Proposal Id.  The Approval Expiry Date is added to Agreement artifact and implies the effective timeout on the whole Agreement Confirmation sequence.  A successful call to &#x60;createAgreement&#x60; shall immediately be followed by a &#x60;confirmAgreement&#x60; and &#x60;waitForApproval&#x60; call in order to listen for responses from the Provider.  **Note**: Moves given Proposal to &#x60;Approved&#x60; state. </remarks>
+            <param name="body"></param>
+            <response code="201">Agreement created.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.CreateProposal(System.String,System.String,GolemMarketMockAPI.MarketAPI.Models.Proposal)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.CreateProposalDemand(GolemMarketMockAPI.MarketAPI.Models.Proposal,System.String,System.String)">
             <summary>
-            Creates agreement proposal
+            Responds with a bespoke Demand to received Offer.
+            </summary>
+            <remarks>Creates and sends a modified version of original Demand (a counter-proposal) adjusted to previously received Proposal (ie. Offer). Changes Proposal state to &#x60;Draft&#x60;. Returns created Proposal id. </remarks>
+            <param name="body"></param>
+            <param name="subscriptionId"></param>
+            <param name="proposalId"></param>
+            <response code="201">Counter Proposal created.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Proposal rejected.</response>
+            <response code="0">Unexpected error.</response>
+        </member>
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.GetDemands">
+            <summary>
+            Fetches all active Demands which have been published by the Requestor.
+            </summary>
+            <response code="200">Demand list.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="0">Unexpected error.</response>
+        </member>
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.GetProposalOffer(System.String,System.String)">
+            <summary>
+            Fetches Proposal (Offer) with given id.
             </summary>
             <param name="subscriptionId"></param>
             <param name="proposalId"></param>
-            <param name="demandProposal"></param>
-            <response code="200">OK</response>
+            <response code="200">Proposal.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Proposal rejected.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.GetProposal(System.String,System.String)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.PostQueryReplyDemands(GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply,System.String,System.String)">
             <summary>
-            Fetches agreement proposal from proposal id.
+            Handles dynamic property query.
             </summary>
-            <param name="subscriptionId"></param>
-            <param name="proposalId"></param>
-            <response code="200">OK</response>
-        </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.QueryResponse(System.String,System.String,GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse)">
-            <summary>
-            
-            </summary>
+            <remarks>The Market Matching Mechanism, when resolving the match relation for the specific Demand-Offer pair, is to detect the “dynamic” properties required (via constraints) by the other side. At this point, it is able to query the issuing node for those properties and submit the other side’s requested properties as the context of the query.  **Note**: The property query responses may be submitted in “chunks”, ie. the responder may choose to resolve ‘quick’/lightweight’ properties faster and provide response sooner, while still working on more time-consuming properties in the background. Therefore the response contains both the resolved properties, as well as list of properties which responder knows still require resolution.  **Note**: This method must be implemented for Market API Capability Level 2. </remarks>
+            <param name="body"></param>
             <param name="subscriptionId"></param>
             <param name="queryId"></param>
-            <param name="propertyValues"></param>
-            <response code="200">OK</response>
+            <response code="204">OK, query reply posted.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.RejectProposal(System.String,System.String)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.RejectProposalOffer(System.String,System.String)">
             <summary>
-            Rejects offer
+            Rejects Proposal (Offer).
             </summary>
+            <remarks>Effectively ends a Negotiation chain - it explicitly indicates that the sender will not create another counter-Proposal. </remarks>
             <param name="subscriptionId"></param>
             <param name="proposalId"></param>
-            <response code="204">OK</response>
+            <response code="204">Proposal rejected.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Proposal already rejected.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.Subscribe(GolemMarketMockAPI.MarketAPI.Models.Demand)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.SubscribeDemand(GolemMarketMockAPI.MarketAPI.Models.Demand)">
             <summary>
-            
+            Publishes Requestor capabilities via Demand.
             </summary>
-            <param name="body">Demand description</param>
-            <response code="201">Offer published</response>
-            <response code="400">Bad offer desciption</response>
+            <remarks>Demand object can be considered an \&quot;open\&quot; or public Demand, as it is not directed at a specific Provider, but rather is sent to the market so that the matching mechanism implementation can associate relevant Offers.  **Note**: it is an \&quot;atomic\&quot; operation, ie. as soon as Subscription is placed, the Demand is published on the market. </remarks>
+            <param name="body"></param>
+            <response code="201">Subscribed.</response>
+            <response code="400">Bad request.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.Unsubscribe(System.String)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.UnsubscribeDemand(System.String)">
             <summary>
-            
+            Stop subscription for previously published Demand.
             </summary>
+            <remarks>Stop receiving Proposals.  **Note**: this will terminate all pending &#x60;collectOffers&#x60; calls on this subscription. This implies, that client code should not &#x60;unsubscribeDemand&#x60; before it has received all expected/useful inputs from &#x60;collectOffers&#x60;. </remarks>
             <param name="subscriptionId"></param>
-            <response code="204">Delete</response>
-            <response code="404">Subscription not found</response>
+            <response code="204">Demand revoked.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="410">Already unsubscribed.</response>
+            <response code="0">Unexpected error.</response>
         </member>
-        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.WaitForApproval(System.String)">
+        <member name="M:GolemMarketMockAPI.Controllers.MarketRequestorApiController.WaitForApproval(System.String,System.Nullable{System.Int32})">
             <summary>
-            
+            Waits for Agreement approval by the Provider.
             </summary>
+            <remarks>This is a blocking operation. The call may be aborted by Requestor caller code. After the call is aborted, another &#x60;waitForApproval&#x60; call can be raised on the same Agreement Id.  It returns one of the following options: * &#x60;Ok&#x60; - Indicates that the Agreement has been approved by the Provider.   - The Provider is now ready to accept a request to start an Activity     as described in the negotiated agreement.   - The Requestor’s corresponding &#x60;waitForApproval&#x60; call returns Ok after     this on the Provider side.  * &#x60;Rejected&#x60; - Indicates that the Provider has called &#x60;rejectAgreement&#x60;,   which effectively stops the Agreement handshake. The Requestor may attempt   to return to the Negotiation phase by sending a new Proposal.  * &#x60;Cancelled&#x60; - Indicates that the Requestor himself has called  &#x60;cancelAgreement&#x60;, which effectively stops the Agreement handshake. </remarks>
             <param name="agreementId"></param>
-            <response code="200">OK</response>
+            <param name="timeout"></param>
+            <response code="200">Agreement approval result.</response>
+            <response code="401">Authorization information is missing or invalid.</response>
+            <response code="404">The specified resource was not found.</response>
+            <response code="0">Unexpected error.</response>
         </member>
         <member name="T:GolemMarketMockAPI.Filters.BasePathFilter">
             <summary>
@@ -1742,14 +1879,93 @@
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.ProposalId">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.AgreementId">
             <summary>
-            Gets or Sets ProposalId
+            Gets or Sets AgreementId
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.ExpirationDate">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.Demand">
             <summary>
-            Gets or Sets ExpirationDate
+            Gets or Sets Demand
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.Offer">
+            <summary>
+            Gets or Sets Offer
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.ValidTo">
+            <summary>
+            End of validity period. Agreement needs to be accepted, rejected or cancellled before this date; otherwise will expire 
+            </summary>
+            <value>End of validity period. Agreement needs to be accepted, rejected or cancellled before this date; otherwise will expire </value>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.ApprovedDate">
+            <summary>
+            date of the Agreement approval
+            </summary>
+            <value>date of the Agreement approval</value>
+        </member>
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.Agreement.StateEnum">
+            <summary>
+            * `Proposal` - newly created by a Requestor (based on Proposal) * `Pending` - confirmed by a Requestor and send to Provider for approval * `Cancelled` by a Requestor * `Rejected` by a Provider * `Approved` by both sides * `Expired` - not accepted, rejected nor cancelled within validity period * `Terminated` - finished after approval. 
+            </summary>
+            <value>* `Proposal` - newly created by a Requestor (based on Proposal) * `Pending` - confirmed by a Requestor and send to Provider for approval * `Cancelled` by a Requestor * `Rejected` by a Provider * `Approved` by both sides * `Expired` - not accepted, rejected nor cancelled within validity period * `Terminated` - finished after approval. </value>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Agreement.StateEnum.ProposalEnum">
+            <summary>
+            Enum ProposalEnum for Proposal
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Agreement.StateEnum.PendingEnum">
+            <summary>
+            Enum PendingEnum for Pending
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Agreement.StateEnum.CancelledEnum">
+            <summary>
+            Enum CancelledEnum for Cancelled
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Agreement.StateEnum.RejectedEnum">
+            <summary>
+            Enum RejectedEnum for Rejected
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Agreement.StateEnum.ApprovedEnum">
+            <summary>
+            Enum ApprovedEnum for Approved
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Agreement.StateEnum.ExpiredEnum">
+            <summary>
+            Enum ExpiredEnum for Expired
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Agreement.StateEnum.TerminatedEnum">
+            <summary>
+            Enum TerminatedEnum for Terminated
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.State">
+            <summary>
+            * &#x60;Proposal&#x60; - newly created by a Requestor (based on Proposal) * &#x60;Pending&#x60; - confirmed by a Requestor and send to Provider for approval * &#x60;Cancelled&#x60; by a Requestor * &#x60;Rejected&#x60; by a Provider * &#x60;Approved&#x60; by both sides * &#x60;Expired&#x60; - not accepted, rejected nor cancelled within validity period * &#x60;Terminated&#x60; - finished after approval. 
+            </summary>
+            <value>* &#x60;Proposal&#x60; - newly created by a Requestor (based on Proposal) * &#x60;Pending&#x60; - confirmed by a Requestor and send to Provider for approval * &#x60;Cancelled&#x60; by a Requestor * &#x60;Rejected&#x60; by a Provider * &#x60;Approved&#x60; by both sides * &#x60;Expired&#x60; - not accepted, rejected nor cancelled within validity period * &#x60;Terminated&#x60; - finished after approval. </value>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.ProposedSignature">
+            <summary>
+            Gets or Sets ProposedSignature
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.ApprovedSignature">
+            <summary>
+            Gets or Sets ApprovedSignature
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Agreement.CommittedSignature">
+            <summary>
+            Gets or Sets CommittedSignature
             </summary>
         </member>
         <member name="M:GolemMarketMockAPI.MarketAPI.Models.Agreement.ToString">
@@ -1784,25 +2000,64 @@
             </summary>
             <returns>Hash code</returns>
         </member>
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.AgreementEvent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.AgreementEvent.Agreement">
+            <summary>
+            Gets or Sets Agreement
+            </summary>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.AgreementEvent.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.AgreementEvent.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.AgreementEvent.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.AgreementEvent.Equals(GolemMarketMockAPI.MarketAPI.Models.AgreementEvent)">
+            <summary>
+            Returns true if AgreementEvent instances are equal
+            </summary>
+            <param name="other">Instance of AgreementEvent to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.AgreementEvent.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
         <member name="T:GolemMarketMockAPI.MarketAPI.Models.AgreementProposal">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.AgreementProposal.Id">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.AgreementProposal.ProposalId">
             <summary>
-            Gets or Sets Id
+            id of the proposal to be promoted to the Agreement
             </summary>
+            <value>id of the proposal to be promoted to the Agreement</value>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.AgreementProposal.Demand">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.AgreementProposal.ValidTo">
             <summary>
-            Gets or Sets Demand
+            End of validity period. Agreement needs to be accepted, rejected or cancellled before this date; otherwise will expire 
             </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.AgreementProposal.Offer">
-            <summary>
-            Gets or Sets Offer
-            </summary>
+            <value>End of validity period. Agreement needs to be accepted, rejected or cancellled before this date; otherwise will expire </value>
         </member>
         <member name="M:GolemMarketMockAPI.MarketAPI.Models.AgreementProposal.ToString">
             <summary>
@@ -1841,14 +2096,14 @@
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Demand.Properties">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Demand.DemandId">
             <summary>
-            Gets or Sets Properties
+            Gets or Sets DemandId
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Demand.Constraints">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Demand.RequestorId">
             <summary>
-            Gets or Sets Constraints
+            Gets or Sets RequestorId
             </summary>
         </member>
         <member name="M:GolemMarketMockAPI.MarketAPI.Models.Demand.ToString">
@@ -1883,105 +2138,142 @@
             </summary>
             <returns>Hash code</returns>
         </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.DemandEvent">
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.DemandEvent.Demand">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase.Properties">
             <summary>
-            Gets or Sets Demand
+            Gets or Sets Properties
             </summary>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandEvent.ToString">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase.Constraints">
+            <summary>
+            Gets or Sets Constraints
+            </summary>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase.ToString">
             <summary>
             Returns the string presentation of the object
             </summary>
             <returns>String presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandEvent.ToJson">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase.ToJson">
             <summary>
             Returns the JSON string presentation of the object
             </summary>
             <returns>JSON string presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandEvent.Equals(System.Object)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase.Equals(System.Object)">
             <summary>
             Returns true if objects are equal
             </summary>
             <param name="obj">Object to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandEvent.Equals(GolemMarketMockAPI.MarketAPI.Models.DemandEvent)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase.Equals(GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase)">
             <summary>
-            Returns true if DemandEvent instances are equal
+            Returns true if DemandOfferBase instances are equal
             </summary>
-            <param name="other">Instance of DemandEvent to be compared</param>
+            <param name="other">Instance of DemandOfferBase to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandEvent.GetHashCode">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.DemandOfferBase.GetHashCode">
             <summary>
             Gets the hash code
             </summary>
             <returns>Hash code</returns>
         </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent">
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.Error">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.AgreementId">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Error.Code">
             <summary>
-            Gets or Sets AgreementId
+            Gets or Sets Code
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.RequestorId">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Error.Message">
             <summary>
-            Gets or Sets RequestorId
+            Gets or Sets Message
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.Demand">
-            <summary>
-            Gets or Sets Demand
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.ProviderId">
-            <summary>
-            Gets or Sets ProviderId
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.Offer">
-            <summary>
-            Gets or Sets Offer
-            </summary>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.ToString">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.ToString">
             <summary>
             Returns the string presentation of the object
             </summary>
             <returns>String presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.ToJson">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.ToJson">
             <summary>
             Returns the JSON string presentation of the object
             </summary>
             <returns>JSON string presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.Equals(System.Object)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.Equals(System.Object)">
             <summary>
             Returns true if objects are equal
             </summary>
             <param name="obj">Object to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.Equals(GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.Equals(GolemMarketMockAPI.MarketAPI.Models.Error)">
             <summary>
-            Returns true if NewAgreementEvent instances are equal
+            Returns true if Error instances are equal
             </summary>
-            <param name="other">Instance of NewAgreementEvent to be compared</param>
+            <param name="other">Instance of Error to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.NewAgreementEvent.GetHashCode">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.Event">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Event.EventType">
+            <summary>
+            Gets or Sets EventType
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Event.EventDate">
+            <summary>
+            Gets or Sets EventDate
+            </summary>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Event.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Event.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Event.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Event.Equals(GolemMarketMockAPI.MarketAPI.Models.Event)">
+            <summary>
+            Returns true if Event instances are equal
+            </summary>
+            <param name="other">Instance of Event to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Event.GetHashCode">
             <summary>
             Gets the hash code
             </summary>
@@ -1992,14 +2284,14 @@
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Offer.Properties">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Offer.OfferId">
             <summary>
-            Gets or Sets Properties
+            Gets or Sets OfferId
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Offer.Constraints">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Offer.ProviderId">
             <summary>
-            Gets or Sets Constraints
+            Gets or Sets ProviderId
             </summary>
         </member>
         <member name="M:GolemMarketMockAPI.MarketAPI.Models.Offer.ToString">
@@ -2034,80 +2326,132 @@
             </summary>
             <returns>Hash code</returns>
         </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.OfferEvent">
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.OfferEvent.Offer">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery.IssuerProperties">
             <summary>
-            Gets or Sets Offer
+            Gets or Sets IssuerProperties
             </summary>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.OfferEvent.ToString">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery.QueryId">
+            <summary>
+            Gets or Sets QueryId
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery.QueriedProperties">
+            <summary>
+            Gets or Sets QueriedProperties
+            </summary>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery.ToString">
             <summary>
             Returns the string presentation of the object
             </summary>
             <returns>String presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.OfferEvent.ToJson">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery.ToJson">
             <summary>
             Returns the JSON string presentation of the object
             </summary>
             <returns>JSON string presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.OfferEvent.Equals(System.Object)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery.Equals(System.Object)">
             <summary>
             Returns true if objects are equal
             </summary>
             <param name="obj">Object to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.OfferEvent.Equals(GolemMarketMockAPI.MarketAPI.Models.OfferEvent)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery.Equals(GolemMarketMockAPI.MarketAPI.Models.PropertyQuery)">
             <summary>
-            Returns true if OfferEvent instances are equal
+            Returns true if PropertyQuery instances are equal
             </summary>
-            <param name="other">Instance of OfferEvent to be compared</param>
+            <param name="other">Instance of PropertyQuery to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.OfferEvent.GetHashCode">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQuery.GetHashCode">
             <summary>
             Gets the hash code
             </summary>
             <returns>Hash code</returns>
         </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse">
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryEvent">
             <summary>
             
             </summary>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse.ToString">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryEvent.PropertyQuery">
+            <summary>
+            Gets or Sets PropertyQuery
+            </summary>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryEvent.ToString">
             <summary>
             Returns the string presentation of the object
             </summary>
             <returns>String presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse.ToJson">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryEvent.ToJson">
             <summary>
             Returns the JSON string presentation of the object
             </summary>
             <returns>JSON string presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse.Equals(System.Object)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryEvent.Equals(System.Object)">
             <summary>
             Returns true if objects are equal
             </summary>
             <param name="obj">Object to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse.Equals(GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryEvent.Equals(GolemMarketMockAPI.MarketAPI.Models.PropertyQueryEvent)">
             <summary>
-            Returns true if PropertyQueryResponse instances are equal
+            Returns true if PropertyQueryEvent instances are equal
             </summary>
-            <param name="other">Instance of PropertyQueryResponse to be compared</param>
+            <param name="other">Instance of PropertyQueryEvent to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryResponse.GetHashCode">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryEvent.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply.Equals(GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply)">
+            <summary>
+            Returns true if PropertyQueryReply instances are equal
+            </summary>
+            <param name="other">Instance of PropertyQueryReply to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.PropertyQueryReply.GetHashCode">
             <summary>
             Gets the hash code
             </summary>
@@ -2118,25 +2462,58 @@
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Proposal.Id">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Proposal.ProposalId">
             <summary>
-            Gets or Sets Id
+            Gets or Sets ProposalId
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Proposal.Properties">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Proposal.IssuerId">
             <summary>
-            Gets or Sets Properties
+            Gets or Sets IssuerId
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Proposal.Constraints">
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.Proposal.StateEnum">
             <summary>
-            Gets or Sets Constraints
+            * `Initial` - proposal arrived from the market as response to subscription * `Draft` - bespoke counter-proposal issued by one party directly to other party (negotiation phase) * `Rejected` by other party * `Accepted` - promoted into the Agreement draft * `Expired` - not accepted nor rejected before validity period 
             </summary>
+            <value>* `Initial` - proposal arrived from the market as response to subscription * `Draft` - bespoke counter-proposal issued by one party directly to other party (negotiation phase) * `Rejected` by other party * `Accepted` - promoted into the Agreement draft * `Expired` - not accepted nor rejected before validity period </value>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Proposal.StateEnum.InitialEnum">
+            <summary>
+            Enum InitialEnum for Initial
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Proposal.StateEnum.DraftEnum">
+            <summary>
+            Enum DraftEnum for Draft
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Proposal.StateEnum.RejectedEnum">
+            <summary>
+            Enum RejectedEnum for Rejected
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Proposal.StateEnum.AcceptedEnum">
+            <summary>
+            Enum AcceptedEnum for Accepted
+            </summary>
+        </member>
+        <member name="F:GolemMarketMockAPI.MarketAPI.Models.Proposal.StateEnum.ExpiredEnum">
+            <summary>
+            Enum ExpiredEnum for Expired
+            </summary>
+        </member>
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Proposal.State">
+            <summary>
+            * &#x60;Initial&#x60; - proposal arrived from the market as response to subscription * &#x60;Draft&#x60; - bespoke counter-proposal issued by one party directly to other party (negotiation phase) * &#x60;Rejected&#x60; by other party * &#x60;Accepted&#x60; - promoted into the Agreement draft * &#x60;Expired&#x60; - not accepted nor rejected before validity period 
+            </summary>
+            <value>* &#x60;Initial&#x60; - proposal arrived from the market as response to subscription * &#x60;Draft&#x60; - bespoke counter-proposal issued by one party directly to other party (negotiation phase) * &#x60;Rejected&#x60; by other party * &#x60;Accepted&#x60; - promoted into the Agreement draft * &#x60;Expired&#x60; - not accepted nor rejected before validity period </value>
         </member>
         <member name="P:GolemMarketMockAPI.MarketAPI.Models.Proposal.PrevProposalId">
             <summary>
-            Gets or Sets PrevProposalId
+            id of the proposal from other side which this proposal responds to 
             </summary>
+            <value>id of the proposal from other side which this proposal responds to </value>
         </member>
         <member name="M:GolemMarketMockAPI.MarketAPI.Models.Proposal.ToString">
             <summary>
@@ -2170,147 +2547,43 @@
             </summary>
             <returns>Hash code</returns>
         </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.ProviderEvent">
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.ProposalEvent">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.ProviderEvent.EventType">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.ProposalEvent.Proposal">
             <summary>
-            Gets or Sets EventType
+            Gets or Sets Proposal
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.ProviderEvent.RequestorId">
-            <summary>
-            Gets or Sets RequestorId
-            </summary>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderEvent.ToString">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProposalEvent.ToString">
             <summary>
             Returns the string presentation of the object
             </summary>
             <returns>String presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderEvent.ToJson">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProposalEvent.ToJson">
             <summary>
             Returns the JSON string presentation of the object
             </summary>
             <returns>JSON string presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderEvent.Equals(System.Object)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProposalEvent.Equals(System.Object)">
             <summary>
             Returns true if objects are equal
             </summary>
             <param name="obj">Object to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderEvent.Equals(GolemMarketMockAPI.MarketAPI.Models.ProviderEvent)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProposalEvent.Equals(GolemMarketMockAPI.MarketAPI.Models.ProposalEvent)">
             <summary>
-            Returns true if ProviderEvent instances are equal
+            Returns true if ProposalEvent instances are equal
             </summary>
-            <param name="other">Instance of ProviderEvent to be compared</param>
+            <param name="other">Instance of ProposalEvent to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderEvent.GetHashCode">
-            <summary>
-            Gets the hash code
-            </summary>
-            <returns>Hash code</returns>
-        </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery.RequestorDesc">
-            <summary>
-            Gets or Sets RequestorDesc
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery.QueryId">
-            <summary>
-            Gets or Sets QueryId
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery.QueriedProps">
-            <summary>
-            Gets or Sets QueriedProps
-            </summary>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery.ToString">
-            <summary>
-            Returns the string presentation of the object
-            </summary>
-            <returns>String presentation of the object</returns>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery.ToJson">
-            <summary>
-            Returns the JSON string presentation of the object
-            </summary>
-            <returns>JSON string presentation of the object</returns>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery.Equals(System.Object)">
-            <summary>
-            Returns true if objects are equal
-            </summary>
-            <param name="obj">Object to be compared</param>
-            <returns>Boolean</returns>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery.Equals(GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery)">
-            <summary>
-            Returns true if ProviderPropertyQuery instances are equal
-            </summary>
-            <param name="other">Instance of ProviderPropertyQuery to be compared</param>
-            <returns>Boolean</returns>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProviderPropertyQuery.GetHashCode">
-            <summary>
-            Gets the hash code
-            </summary>
-            <returns>Hash code</returns>
-        </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.RequestorEvent">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.RequestorEvent.EventType">
-            <summary>
-            Gets or Sets EventType
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.RequestorEvent.ProviderId">
-            <summary>
-            Gets or Sets ProviderId
-            </summary>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.RequestorEvent.ToString">
-            <summary>
-            Returns the string presentation of the object
-            </summary>
-            <returns>String presentation of the object</returns>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.RequestorEvent.ToJson">
-            <summary>
-            Returns the JSON string presentation of the object
-            </summary>
-            <returns>JSON string presentation of the object</returns>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.RequestorEvent.Equals(System.Object)">
-            <summary>
-            Returns true if objects are equal
-            </summary>
-            <param name="obj">Object to be compared</param>
-            <returns>Boolean</returns>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.RequestorEvent.Equals(GolemMarketMockAPI.MarketAPI.Models.RequestorEvent)">
-            <summary>
-            Returns true if RequestorEvent instances are equal
-            </summary>
-            <param name="other">Instance of RequestorEvent to be compared</param>
-            <returns>Boolean</returns>
-        </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.RequestorEvent.GetHashCode">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ProposalEvent.GetHashCode">
             <summary>
             Gets the hash code
             </summary>

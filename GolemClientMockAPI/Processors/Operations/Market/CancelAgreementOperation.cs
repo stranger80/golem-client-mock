@@ -53,7 +53,7 @@ namespace GolemClientMockAPI.Processors.Operations
             {
                 switch(agreement.State)
                 {
-                    case AgreementState.Proposed:
+                    case AgreementState.Pending:
                         this.AgreementRepository.UpdateAgreementState(agreementId, AgreementState.Cancelled);
 
                         // if there already is an awaiting response pipeline - put Cancel event in it
@@ -64,6 +64,7 @@ namespace GolemClientMockAPI.Processors.Operations
 
                         return true;
                     case AgreementState.Cancelled:
+                    case AgreementState.Rejected: // already rejected - cancel successful
 
                         return true;
 

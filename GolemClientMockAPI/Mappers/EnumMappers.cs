@@ -14,9 +14,9 @@ namespace GolemClientMockAPI.Mappers
             switch(eventType)
             {
                 case MarketRequestorEventType.Proposal:
-                    return "offer";
+                    return "ProposalEvent";
                 case MarketRequestorEventType.PropertyQuery:
-                    return "propertyQuery";
+                    return "PropertyQueryEvent";
                 default:
                     throw new Exception($"Unknown RequestorEventType {eventType}");
             }
@@ -26,11 +26,11 @@ namespace GolemClientMockAPI.Mappers
             switch (eventType)
             {
                 case MarketProviderEventType.Proposal:
-                    return "demand";
+                    return "ProposalEvent";
                 case MarketProviderEventType.PropertyQuery:
-                    return "propertyQuery";
+                    return "PropertyQueryEvent";
                 case MarketProviderEventType.AgreementProposal:
-                    return "newAgreement";
+                    return "AgreementEvent";
                 default:
                     throw new Exception($"Unknown ProviderEventType {eventType}");
             }

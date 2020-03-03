@@ -35,7 +35,7 @@ namespace GolemClientMockAPI.Processors.Operations
             {
                 // 1. Set agreement state to Proposed and persist
 
-                this.AgreementRepository.UpdateAgreementState(agreementId, AgreementState.Proposed);
+                this.AgreementRepository.UpdateAgreementState(agreementId, AgreementState.Pending);
 
                 // 2. Send the Agreement in Proposed state to the Provider
 
@@ -51,9 +51,10 @@ namespace GolemClientMockAPI.Processors.Operations
                     this.ProviderEventPipelines[this.OfferSubscriptions[providerSubscriptionId]].PipelineQueue.Add(
                         new MarketProviderEvent()
                         {
+                            EventDate = DateTime.Now,
                             EventType = MarketProviderEvent.MarketProviderEventType.AgreementProposal,
                             Agreement = agreement,
-                            RequestorId = agreement.Demand.NodeId
+                            RequestorId = agreement.DemandProposal.Demand.NodeId
                         });
                 }
                 else

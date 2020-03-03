@@ -236,12 +236,12 @@ namespace GolemMarketApiMockupTests
             // OK, so the reqEvents2 now contains an offer which is acceptable.
             // Requestor can move on to propose Agreement...
 
-            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id);
+            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id, System.DateTime.Now);
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);
-            Assert.AreEqual(AgreementState.New, agreement.State);
-            Assert.IsNotNull(agreement.Demand);
+            Assert.AreEqual(AgreementState.Proposal, agreement.State);
+            Assert.IsNotNull(agreement.DemandProposal);
 
             // Confirm and start waiting for Agreement proposal response
             AgreementResultEnum? agreementResponse = null;
@@ -288,12 +288,12 @@ namespace GolemMarketApiMockupTests
             // OK, so the reqEvents2 now contains an offer which is acceptable.
             // Requestor can move on to propose Agreement...
 
-            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id);
+            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id, System.DateTime.Now);
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);
-            Assert.AreEqual(AgreementState.New, agreement.State);
-            Assert.IsNotNull(agreement.Demand);
+            Assert.AreEqual(AgreementState.Proposal, agreement.State);
+            Assert.IsNotNull(agreement.DemandProposal);
 
             // Confirm and start waiting for Agreement proposal response
             AgreementResultEnum? agreementResponse = null;
@@ -340,12 +340,12 @@ namespace GolemMarketApiMockupTests
             // OK, so the reqEvents2 now contains an offer which is acceptable.
             // Requestor can move on to propose Agreement...
 
-            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id);
+            var agreement = RequestorProcessor.CreateAgreement(lastOfferProposal.Id, System.DateTime.Now);
 
             Assert.IsNotNull(agreement);
             Assert.AreEqual(lastOfferProposal.Id, agreement.Id);
-            Assert.AreEqual(AgreementState.New, agreement.State);
-            Assert.IsNotNull(agreement.Demand);
+            Assert.AreEqual(AgreementState.Proposal, agreement.State);
+            Assert.IsNotNull(agreement.DemandProposal);
 
             // Confirm and start waiting for Agreement proposal response
             AgreementResultEnum? agreementResponse = null;

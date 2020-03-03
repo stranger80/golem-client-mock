@@ -3,6 +3,7 @@ using GolemClientMockAPI.Processors;
 using GolemClientMockAPI.Repository;
 using GolemMarketApiMockup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -39,7 +40,13 @@ namespace GolemMarketApiMockupTests
         {
             // Test scenario
 
-            var demand = new Demand() { Constraints = "", NodeId = "DummyRequestorNode1", Properties = new Dictionary<string, string>() };
+            
+            var demand = new DemandProposal() {
+                            OfferId = "dummyOfferId",
+                            InternalId = 2,
+                            Id = "DummyProposalId",
+                            Demand = new Demand() { Constraints = "", NodeId = "DummyRequestorNode1", Properties = new Dictionary<string, string>() }
+            };
             var offer = new OfferProposal() {
                             DemandId = "dummyDemandId",
                             Id = "DummyProposalId",
@@ -50,7 +57,7 @@ namespace GolemMarketApiMockupTests
                                 Properties = new Dictionary<string, string>()
                             }
             };
-            var agreement = this.AgreementRepository.CreateAgreement(demand, offer);
+            var agreement = this.AgreementRepository.CreateAgreement(demand, offer, DateTime.Now);
 
             // 1. Create Activity in a known, negotiated agreement
 

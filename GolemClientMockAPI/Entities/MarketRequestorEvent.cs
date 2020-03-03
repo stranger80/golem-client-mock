@@ -13,6 +13,8 @@ namespace GolemClientMockAPI.Entities
             PropertyQuery
         }
 
+        public DateTime EventDate { get; set; }
+
         public MarketRequestorEventType EventType { get; set; }
 
         public string ProviderId { get; set; }

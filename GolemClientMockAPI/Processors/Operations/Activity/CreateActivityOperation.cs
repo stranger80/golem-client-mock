@@ -28,8 +28,8 @@ namespace GolemClientMockAPI.Processors.Operations.Activity
             }
             else
             {
-                var requestorNodeId = agreement.Demand.NodeId;
-                var providerNodeId = agreement.Offer.NodeId;
+                var requestorNodeId = agreement.DemandProposal.Demand.NodeId;
+                var providerNodeId = agreement.OfferProposal.Offer.NodeId;
 
                 // 1. Create the activity record
 

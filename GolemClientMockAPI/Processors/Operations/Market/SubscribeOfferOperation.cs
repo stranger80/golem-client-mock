@@ -60,6 +60,7 @@ namespace GolemClientMockAPI.Processors.Operations
                         // build Requestor OfferProposal event and put in Requestor pipeline
                         var requestorEvent = new MarketRequestorEvent()
                         {
+                            EventDate = DateTime.Now,
                             EventType = MarketRequestorEvent.MarketRequestorEventType.Proposal,
                             OfferProposal = offerProposal,
                             ProviderId = offer.NodeId

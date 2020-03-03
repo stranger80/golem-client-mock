@@ -25,6 +25,14 @@ namespace GolemClientMockAPI.Mappers
             return this.Mapper.Map<Proposal>(offerProposal);
         }
 
+        public Offer MapEntityToModel(Entities.OfferSubscription offerSubs)
+        {
+            var offer = this.Mapper.Map<Offer>(offerSubs.Offer);
+
+            offer.OfferId = offerSubs.Id;
+
+            return offer;
+        }
 
 
     }

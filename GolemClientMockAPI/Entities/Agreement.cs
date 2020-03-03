@@ -7,11 +7,13 @@ namespace GolemClientMockAPI.Entities
 {
     public enum AgreementState
     {
-        New,
-        Proposed,
-        Approved,
-        Rejected,
-        Cancelled
+        Proposal = 0,
+        Pending = 1,
+        Cancelled = 2,
+        Rejected = 3,
+        Approved = 4,
+        Expired = 5,
+        Terminated = -1,
     }
 
     public class Agreement
@@ -20,8 +22,10 @@ namespace GolemClientMockAPI.Entities
 
         public AgreementState State { get; set; }
 
-        public Demand Demand { get; set; }
+        public DemandProposal DemandProposal { get; set; }
 
-        public Offer Offer { get; set; }
+        public OfferProposal OfferProposal { get; set; }
+
+        public DateTime ValidTo { get; set; }
     }
 }

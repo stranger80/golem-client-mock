@@ -24,20 +24,8 @@ namespace GolemMarketMockAPI.MarketAPI.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class Demand : DemandOfferBase, IEquatable<Demand>
+    public partial class PropertyQueryReply : IEquatable<PropertyQueryReply>
     { 
-        /// <summary>
-        /// Gets or Sets DemandId
-        /// </summary>
-        [DataMember(Name="demandId")]
-        public string DemandId { get; set; }
-
-        /// <summary>
-        /// Gets or Sets RequestorId
-        /// </summary>
-        [DataMember(Name="requestorId")]
-        public string RequestorId { get; private set; }
-
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -45,9 +33,7 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Demand {\n");
-            sb.Append("  DemandId: ").Append(DemandId).Append("\n");
-            sb.Append("  RequestorId: ").Append(RequestorId).Append("\n");
+            sb.Append("class PropertyQueryReply {\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -56,7 +42,7 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public  new string ToJson()
+        public string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
@@ -70,30 +56,20 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Demand)obj);
+            return obj.GetType() == GetType() && Equals((PropertyQueryReply)obj);
         }
 
         /// <summary>
-        /// Returns true if Demand instances are equal
+        /// Returns true if PropertyQueryReply instances are equal
         /// </summary>
-        /// <param name="other">Instance of Demand to be compared</param>
+        /// <param name="other">Instance of PropertyQueryReply to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(Demand other)
+        public bool Equals(PropertyQueryReply other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return 
-                (
-                    DemandId == other.DemandId ||
-                    DemandId != null &&
-                    DemandId.Equals(other.DemandId)
-                ) && 
-                (
-                    RequestorId == other.RequestorId ||
-                    RequestorId != null &&
-                    RequestorId.Equals(other.RequestorId)
-                );
+            return false;
         }
 
         /// <summary>
@@ -106,10 +82,6 @@ namespace GolemMarketMockAPI.MarketAPI.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (DemandId != null)
-                    hashCode = hashCode * 59 + DemandId.GetHashCode();
-                    if (RequestorId != null)
-                    hashCode = hashCode * 59 + RequestorId.GetHashCode();
                 return hashCode;
             }
         }
@@ -117,12 +89,12 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(Demand left, Demand right)
+        public static bool operator ==(PropertyQueryReply left, PropertyQueryReply right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Demand left, Demand right)
+        public static bool operator !=(PropertyQueryReply left, PropertyQueryReply right)
         {
             return !Equals(left, right);
         }

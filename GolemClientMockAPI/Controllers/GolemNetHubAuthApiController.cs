@@ -32,7 +32,6 @@ namespace GolemClientMockAPI.Controllers
             this.ConfigProvider = config;
         }
 
-
         /// <summary>
         /// Authenticate within the hub
         /// </summary>

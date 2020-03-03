@@ -46,6 +46,7 @@ namespace GolemMarketMockAPI.Controllers
         public MarketRequestorEventMapper RequestorEventMapper { get; set; }
         public DemandMapper DemandMapper { get; set; }
         public OfferMapper OfferMapper { get; set; }
+        public AgreementMapper AgreementMapper { get; set; }
 
         public MarketCommonApiController(IRequestorMarketProcessor marketProcessor,
             ISubscriptionRepository subscriptionRepository,
@@ -53,7 +54,8 @@ namespace GolemMarketMockAPI.Controllers
             IAgreementRepository agreementRepository,
             MarketRequestorEventMapper requestorEventMapper,
             DemandMapper demandMapper,
-            OfferMapper offerMapper)
+            OfferMapper offerMapper,
+            AgreementMapper agreementMapper)
         {
             this.MarketProcessor = marketProcessor;
             this.SubscriptionRepository = subscriptionRepository;
@@ -62,6 +64,7 @@ namespace GolemMarketMockAPI.Controllers
             this.RequestorEventMapper = requestorEventMapper;
             this.DemandMapper = demandMapper;
             this.OfferMapper = offerMapper;
+            this.AgreementMapper = agreementMapper;
         }
 
 
@@ -78,11 +81,11 @@ namespace GolemMarketMockAPI.Controllers
         [ValidateModelState]
         [SwaggerOperation("GetAgreement")]
         [SwaggerResponse(statusCode: 200, type: typeof(Agreement), description: "Agreement.")]
-        [SwaggerResponse(statusCode: 401, description: "Authorization information is missing or invalid.")]
-        [SwaggerResponse(statusCode: 404, description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
         public virtual IActionResult GetAgreement([FromRoute][Required]string agreementId)
         {
-
             var clientContext = this.HttpContext.Items["ClientContext"] as GolemClientMockAPI.Entities.ClientContext;
 
             // locate the agreement
@@ -93,18 +96,63 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(404); // Not Found
             }
 
-            if (clientContext.NodeId != agreementEntity.Demand.NodeId)
+            /*
+            if (
+                (clientContext.NodeId != agreementEntity.DemandProposal.Demand.NodeId) 
+                && 
+                (clientContext.NodeId != agreementEntity.OfferProposal.Offer.NodeId)
+            )
             {
+                Console.WriteLine($"whould have returned 401 Unauthorized because of context {clientContext.NodeId} != {agreementEntity.DemandProposal.Demand.NodeId} agreement");
                 return StatusCode(401); // Unauthorized
             }
+            */
 
-            // NOTE: Map the entity struct into response DTO here:
-            var agreement = new Agreement()
-            {
-                ProposalId = agreementEntity.Id
-            };
+            var agreement = AgreementMapper.MapEntityToAgreement(agreementEntity);
 
             return StatusCode(200, agreement);
         }
+
+
+        /// <summary>
+        /// Terminates approved Agreement.
+        /// </summary>
+        /// <param name="agreementId"></param>
+        /// <response code="204">Agreement terminated.</response>
+        /// <response code="401">Authorization information is missing or invalid.</response>
+        /// <response code="404">The specified resource was not found.</response>
+        /// <response code="409">Agreement not in Approved state.</response>
+        /// <response code="410">Agreement cancelled by the Requstor.</response>
+        /// <response code="0">Unexpected error.</response>
+        [HttpPost]
+        [Route("/market-api/v1/agreements/{agreementId}/terminate")]
+        [ValidateModelState]
+        [SwaggerOperation("TerminateAgreement")]
+        [SwaggerResponse(statusCode: 401, type: typeof(Error), description: "Authorization information is missing or invalid.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "The specified resource was not found.")]
+        [SwaggerResponse(statusCode: 0, type: typeof(Error), description: "Unexpected error.")]
+        public virtual IActionResult TerminateAgreement([FromRoute][Required]string agreementId)
+        { 
+            //TODO: Uncomment the next line to return response 204 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+            // return StatusCode(204);
+
+            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+            // return StatusCode(401, default(Error));
+
+            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+            // return StatusCode(404, default(Error));
+
+            //TODO: Uncomment the next line to return response 409 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+            // return StatusCode(409);
+
+            //TODO: Uncomment the next line to return response 410 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+            // return StatusCode(410);
+
+            //TODO: Uncomment the next line to return response 0 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+            // return StatusCode(0, default(Error));
+
+            throw new NotImplementedException();
+        }
+
     }
 }

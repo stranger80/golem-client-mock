@@ -45,6 +45,7 @@ namespace GolemClientMockAPI.Processors.Operations
                     // put the proposals in response
                     result.AddRange(recordedProposals.Select(prop => new MarketProviderEvent()
                     {
+                        EventDate = DateTime.Now,
                         EventType = MarketProviderEvent.MarketProviderEventType.Proposal,
                         DemandProposal = prop,
                         RequestorId = prop.Demand.NodeId
