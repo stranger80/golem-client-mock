@@ -24,15 +24,8 @@ namespace GolemMarketMockAPI.MarketAPI.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class Error : IEquatable<Error>
+    public partial class ErrorMessage : IEquatable<ErrorMessage>
     { 
-        /// <summary>
-        /// Gets or Sets Code
-        /// </summary>
-        [Required]
-        [DataMember(Name="code")]
-        public string Code { get; set; }
-
         /// <summary>
         /// Gets or Sets Message
         /// </summary>
@@ -47,8 +40,7 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Error {\n");
-            sb.Append("  Code: ").Append(Code).Append("\n");
+            sb.Append("class ErrorMessage {\n");
             sb.Append("  Message: ").Append(Message).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -72,7 +64,7 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Error)obj);
+            return obj.GetType() == GetType() && Equals((ErrorMessage)obj);
         }
 
         /// <summary>
@@ -80,22 +72,15 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         /// </summary>
         /// <param name="other">Instance of Error to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(Error other)
+        public bool Equals(ErrorMessage other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
-                (
-                    Code == other.Code ||
-                    Code != null &&
-                    Code.Equals(other.Code)
-                ) && 
-                (
-                    Message == other.Message ||
-                    Message != null &&
-                    Message.Equals(other.Message)
-                );
+                Message == other.Message ||
+                Message != null &&
+                Message.Equals(other.Message);
         }
 
         /// <summary>
@@ -108,8 +93,6 @@ namespace GolemMarketMockAPI.MarketAPI.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Code != null)
-                    hashCode = hashCode * 59 + Code.GetHashCode();
                     if (Message != null)
                     hashCode = hashCode * 59 + Message.GetHashCode();
                 return hashCode;
@@ -119,12 +102,12 @@ namespace GolemMarketMockAPI.MarketAPI.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(Error left, Error right)
+        public static bool operator ==(ErrorMessage left, ErrorMessage right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Error left, Error right)
+        public static bool operator !=(ErrorMessage left, ErrorMessage right)
         {
             return !Equals(left, right);
         }

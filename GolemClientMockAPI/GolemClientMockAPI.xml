@@ -2162,48 +2162,43 @@
             </summary>
             <returns>Hash code</returns>
         </member>
-        <member name="T:GolemMarketMockAPI.MarketAPI.Models.Error">
+        <member name="T:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage">
             <summary>
             
             </summary>
         </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Error.Code">
-            <summary>
-            Gets or Sets Code
-            </summary>
-        </member>
-        <member name="P:GolemMarketMockAPI.MarketAPI.Models.Error.Message">
+        <member name="P:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.Message">
             <summary>
             Gets or Sets Message
             </summary>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.ToString">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.ToString">
             <summary>
             Returns the string presentation of the object
             </summary>
             <returns>String presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.ToJson">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.ToJson">
             <summary>
             Returns the JSON string presentation of the object
             </summary>
             <returns>JSON string presentation of the object</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.Equals(System.Object)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.Equals(System.Object)">
             <summary>
             Returns true if objects are equal
             </summary>
             <param name="obj">Object to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.Equals(GolemMarketMockAPI.MarketAPI.Models.Error)">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.Equals(GolemMarketMockAPI.MarketAPI.Models.ErrorMessage)">
             <summary>
             Returns true if Error instances are equal
             </summary>
             <param name="other">Instance of Error to be compared</param>
             <returns>Boolean</returns>
         </member>
-        <member name="M:GolemMarketMockAPI.MarketAPI.Models.Error.GetHashCode">
+        <member name="M:GolemMarketMockAPI.MarketAPI.Models.ErrorMessage.GetHashCode">
             <summary>
             Gets the hash code
             </summary>
