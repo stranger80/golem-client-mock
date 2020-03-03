@@ -189,7 +189,7 @@ namespace GolemClientMockAPI.Repository
 
         #region IProposalRepository implementations
 
-        public DemandProposal SaveDemandProposal(string receivingSubscriptionId, string sendingSubscriptionId, Demand demand, string offerProposalId = null)
+        public DemandProposal SaveDemandProposal(string receivingSubscriptionId, string sendingSubscriptionId, Demand demand, string offerId = null, Proposal.StateEnum state = Proposal.StateEnum.InitialEnum)
         {
             if (this.SubscriptionProposals.ContainsKey(receivingSubscriptionId) && this.Subscriptions[receivingSubscriptionId] is OfferSubscription)
             {
@@ -199,9 +199,9 @@ namespace GolemClientMockAPI.Repository
                     InternalId = this.GetNextProposalInternalId(),
                     ReceivingSubscriptionId = receivingSubscriptionId,
                     SendingSubscriptionId = sendingSubscriptionId,
-                    OfferId = offerProposalId,
+                    OfferId = offerId,
                     Demand = demand,
-                    State = Proposal.StateEnum.InitialEnum
+                    State = state
                 };
 
                 // TODO do we need a lock here???
@@ -216,9 +216,9 @@ namespace GolemClientMockAPI.Repository
             }
         }
 
-        public OfferProposal SaveOfferProposal(string receivingSubscriptionId, string sendingSubscriptionId, Offer offer, string demandId = null)
+        public OfferProposal SaveOfferProposal(string receivingSubscriptionId, string sendingSubscriptionId, Offer offer, string demandId = null, Proposal.StateEnum state = Proposal.StateEnum.InitialEnum)
         {
-            if(this.SubscriptionProposals.ContainsKey(receivingSubscriptionId) && this.Subscriptions[receivingSubscriptionId] is DemandSubscription)
+            if (this.SubscriptionProposals.ContainsKey(receivingSubscriptionId) && this.Subscriptions[receivingSubscriptionId] is DemandSubscription)
             {
                 var offerProposal = new OfferProposal()
                 {
@@ -228,7 +228,7 @@ namespace GolemClientMockAPI.Repository
                     SendingSubscriptionId = sendingSubscriptionId,
                     DemandId = demandId,
                     Offer = offer,
-                    State = Proposal.StateEnum.InitialEnum
+                    State = state
                 };
 
                 this.SubscriptionProposals[receivingSubscriptionId].Add(offerProposal);

@@ -1169,7 +1169,7 @@
             <param name="offerProposalId"></param>
             <returns></returns>
         </member>
-        <member name="M:GolemClientMockAPI.Repository.IProposalRepository.SaveDemandProposal(System.String,System.String,GolemClientMockAPI.Entities.Demand,System.String)">
+        <member name="M:GolemClientMockAPI.Repository.IProposalRepository.SaveDemandProposal(System.String,System.String,GolemClientMockAPI.Entities.Demand,System.String,GolemClientMockAPI.Entities.Proposal.StateEnum)">
             <summary>
             Persists a Demand Proposal.
             </summary>
@@ -1178,7 +1178,7 @@
             <param name="offerId">If this Demand Proposal is a counter-proposal to a specific Offer, put OfferId here.</param>
             <returns></returns>
         </member>
-        <member name="M:GolemClientMockAPI.Repository.IProposalRepository.SaveOfferProposal(System.String,System.String,GolemClientMockAPI.Entities.Offer,System.String)">
+        <member name="M:GolemClientMockAPI.Repository.IProposalRepository.SaveOfferProposal(System.String,System.String,GolemClientMockAPI.Entities.Offer,System.String,GolemClientMockAPI.Entities.Proposal.StateEnum)">
             <summary>
             Persists an Offer Proposal.
             </summary>

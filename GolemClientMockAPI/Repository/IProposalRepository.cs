@@ -15,7 +15,7 @@ namespace GolemClientMockAPI.Repository
         /// <param name="demand"></param>
         /// <param name="offerId">If this Demand Proposal is a counter-proposal to a specific Offer, put OfferId here.</param>
         /// <returns></returns>
-        DemandProposal SaveDemandProposal(string receivingSubscriptionId, string sendingSubscriptionId, Demand demand, string offerProposalId = null);
+        DemandProposal SaveDemandProposal(string receivingSubscriptionId, string sendingSubscriptionId, Demand demand, string offerId = null, Proposal.StateEnum state = Proposal.StateEnum.InitialEnum);
 
         /// <summary>
         /// Persists an Offer Proposal.
@@ -24,7 +24,7 @@ namespace GolemClientMockAPI.Repository
         /// <param name="offer"></param>
         /// <param name="demandId">If this Offer Proposal is a counter-proposal to a specific Demand, put DemandId here.</param>
         /// <returns></returns>
-        OfferProposal SaveOfferProposal(string receivingSubscriptionId, string sendingSubscriptionId, Offer offer, string demandProposalId = null);
+        OfferProposal SaveOfferProposal(string receivingSubscriptionId, string sendingSubscriptionId, Offer offer, string demandId = null, Proposal.StateEnum state = Proposal.StateEnum.InitialEnum);
 
         /// <summary>
         /// Get Proposals received by Subscription
