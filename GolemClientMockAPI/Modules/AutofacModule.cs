@@ -3,6 +3,7 @@ using GolemClientMockAPI.Mappers;
 using GolemClientMockAPI.Processors;
 using GolemClientMockAPI.Repository;
 using GolemClientMockAPI.Security;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,13 @@ namespace GolemClientMockAPI.Modules
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
+
+            builder.RegisterType<LoggerFactory>()
+                   .As<ILoggerFactory>()
+                   .SingleInstance();
+            builder.RegisterGeneric(typeof(Logger<>))
+                   .As(typeof(ILogger<>))
+                   .SingleInstance();
 
             builder.RegisterType<MarketRequestorEventMapper>().AsSelf()
                  .SingleInstance();

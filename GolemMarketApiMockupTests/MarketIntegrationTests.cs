@@ -268,6 +268,14 @@ namespace GolemMarketApiMockupTests
 
             Assert.AreEqual(AgreementResultEnum.Approved, agreementResponse);
 
+
+
+            // run another collect on Provider side - allegedly this returns a Proposal Event again???
+
+            var provEvents4 = await ProviderProcessor.CollectProviderEventsAsync(offerSubscription.Id, 5.000f, 10);
+
+            Assert.IsFalse(provEvents4.Any());
+
             DoSubscriptionCleanup(demandSubscription, offerSubscription);
 
         }

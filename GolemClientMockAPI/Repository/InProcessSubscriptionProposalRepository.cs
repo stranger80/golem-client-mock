@@ -174,7 +174,10 @@ namespace GolemClientMockAPI.Repository
             if (this.Subscriptions.ContainsKey(subscriptionId))
             {
                 var subscr = this.Subscriptions[subscriptionId];
-                subscr.LastReceivedProposalId = internalId;
+                if (internalId != null)
+                {
+                    subscr.LastReceivedProposalId = internalId;
+                }
             }
             else
             {

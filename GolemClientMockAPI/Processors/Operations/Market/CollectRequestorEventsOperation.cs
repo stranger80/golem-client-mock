@@ -91,7 +91,7 @@ namespace GolemClientMockAPI.Processors.Operations
                     if (receivedEvents.Any())
                     {
                         // mark the last processed proposal id in the subscription
-                        this.SubscriptionRepository.UpdateLastProposalId(subscriptionId, receivedEvents.Max(ev => ev.OfferProposal?.InternalId));
+                        this.SubscriptionRepository.UpdateLastProposalId(subscriptionId, receivedEvents.Where(ev => ev.EventType == MarketRequestorEvent.MarketRequestorEventType.Proposal).Max(ev => ev.OfferProposal?.InternalId));
 
                         // put the proposals in response
                         result.AddRange(receivedEvents);

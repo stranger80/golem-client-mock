@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GolemClientMockAPI.Extensions;
 using GolemClientMockAPI.Models;
 using GolemClientMockAPI.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace GolemClientMockAPI.Controllers
 {
@@ -13,6 +16,7 @@ namespace GolemClientMockAPI.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
+        private readonly ILogger<AdminController> _logger;
 
         private IList<NodeStats> sampleNodeStats = new List<NodeStats>()
         {
@@ -110,10 +114,11 @@ namespace GolemClientMockAPI.Controllers
         
         public IAppKeyRepository AppKeyRepository { get; set; }
 
-        public AdminController(IStatsRepository statsRepo, IAppKeyRepository appkeyRepo)
+        public AdminController(IStatsRepository statsRepo, IAppKeyRepository appkeyRepo, ILogger<AdminController> logger)
         {
             this.StatsRepository = statsRepo;
             this.AppKeyRepository = appkeyRepo;
+            this._logger = logger;
         }
 
 
@@ -155,9 +160,10 @@ namespace GolemClientMockAPI.Controllers
 
         public virtual IActionResult ImportKey([FromBody]KeyDesc[] keys) {
             foreach (var key in keys) {
-                Console.WriteLine($"key={key.Key}, node_id={key.NodeId}");
+                this._logger.LogWithProperties(LogLevel.Information, "", "Common", "", $"ImportKey key={key.Key}, node_id={key.NodeId}");
             }
             AppKeyRepository.RegisterKeys(keys);
+
 
             return new JsonResult(keys.Length);
         }
@@ -165,6 +171,8 @@ namespace GolemClientMockAPI.Controllers
 
 
     }
+
+
 
 
 }

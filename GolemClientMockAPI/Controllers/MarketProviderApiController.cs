@@ -28,6 +28,7 @@ using GolemClientMockAPI.Security;
 using GolemClientMockAPI.Processors;
 using GolemClientMockAPI.Repository;
 using GolemClientMockAPI.Mappers;
+using GolemClientMockAPI.Extensions;
 
 namespace GolemMarketMockAPI.Controllers
 {
@@ -40,6 +41,7 @@ namespace GolemMarketMockAPI.Controllers
     //[Authorize(AuthenticationSchemes = ApiKeyAuthenticationHandler.SchemeName)]
     public class MarketProviderApiController : Controller
     {
+        private readonly ILogger<MarketProviderApiController> _logger;
 
         public IProviderMarketProcessor MarketProcessor { get; set; }
         public ISubscriptionRepository SubscriptionRepository { get; set; }
@@ -56,7 +58,8 @@ namespace GolemMarketMockAPI.Controllers
             IAgreementRepository agreementRepository,
             MarketProviderEventMapper providerEventMapper,
             OfferMapper offerMapper,
-            DemandMapper demandMapper)
+            DemandMapper demandMapper,
+            ILogger<MarketProviderApiController> logger)
         {
             this.MarketProcessor = marketProcessor;
             this.SubscriptionRepository = subscriptionRepository;
@@ -65,6 +68,7 @@ namespace GolemMarketMockAPI.Controllers
             this.ProviderEventMapper = providerEventMapper;
             this.OfferMapper = offerMapper;
             this.DemandMapper = demandMapper;
+            this._logger = logger;
         }
 
 
@@ -111,6 +115,12 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(410, new ErrorMessage() { });
             }
 
+            this._logger.LogWithProperties(LogLevel.Information,
+               clientContext?.NodeId,
+               "Provider",
+               agreement?.Id,
+               $"ApproveAgreement (AgreementId: {agreementId})");
+
             return StatusCode(200, agreementEntity.State.ToString());
         }
 
@@ -149,10 +159,21 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
 
+            this._logger.LogWithProperties(LogLevel.Information,
+               clientContext?.NodeId,
+               "Provider",
+               subscription?.Id,
+               $"CollectDemands (SubscriptionId: {subscriptionId})");
+
             var events = await this.MarketProcessor.CollectProviderEventsAsync(subscriptionId, timeout, (int?)maxEvents);
 
             var result = events.Select(proposal => this.ProviderEventMapper.Map(proposal))
                                    .ToList();
+            this._logger.LogWithProperties(LogLevel.Information,
+               clientContext?.NodeId,
+               "Provider",
+               subscription?.Id,
+               $"CollectDemands returned {result?.Count} events: " + String.Join(Environment.NewLine, result.Select(item => $"{item.EventType}")) + Environment.NewLine);
 
             // Return the collected requestor events (including offer proposals)
             return StatusCode(200, result);
@@ -206,6 +227,12 @@ namespace GolemMarketMockAPI.Controllers
             try
             {
                 var offerProposalEntity = this.MarketProcessor.CreateOfferProposal(subscriptionId, proposalId, offerEntity);
+
+                this._logger.LogWithProperties(LogLevel.Information,
+                   clientContext?.NodeId,
+                   "Provider",
+                   subscription?.Id,
+                   $"CreateProposalOffer (Demand Proposal Id: {proposalId}, created Offer Proposal Id: {offerProposalEntity.Id})");
 
                 return StatusCode(201, offerProposalEntity.Id);
             }
@@ -290,9 +317,21 @@ namespace GolemMarketMockAPI.Controllers
                 return StatusCode(404, new ErrorMessage() { }); // Not Found
             }
 
+            this._logger.LogWithProperties(LogLevel.Information,
+               clientContext?.NodeId,
+               "Provider",
+               subscription?.Id,
+               $"GetProposalDemand (SubscriptionId: {subscriptionId}, Demand Proposal Id: {proposalId})");
+
             var offerProposal = (demandProposal.OfferId == null) ?
                                     new GolemClientMockAPI.Entities.OfferProposal() { Id = subscriptionId, Offer = subscription.Offer } :
                                     this.ProposalRepository.GetOfferProposal(demandProposal.OfferId);
+
+            this._logger.LogWithProperties(LogLevel.Debug,
+               clientContext?.NodeId,
+               "Provider",
+               subscription?.Id,
+               $"GetProposalDemand returns {demandProposal})");
 
             var result = this.DemandMapper.MapEntityToProposal(demandProposal);
 
@@ -444,6 +483,12 @@ namespace GolemMarketMockAPI.Controllers
 
             var subscription = this.MarketProcessor.SubscribeOffer(offerEntity);
 
+            this._logger.LogWithProperties(LogLevel.Information,
+                               clientContext?.NodeId,
+                               "Provider",
+                               subscription.Id,
+                               $"SubscribeOffer (SubscriptionId: {subscription.Id})");
+
             // return created Subscription Id
             return StatusCode(201, subscription.Id);
         }
@@ -481,6 +526,12 @@ namespace GolemMarketMockAPI.Controllers
             {
                 return StatusCode(401, new ErrorMessage() { }); // Unauthorized
             }
+
+            this._logger.LogWithProperties(LogLevel.Information,
+                   clientContext?.NodeId,
+                   "Provider",
+                   subscription?.Id,
+                   $"UnsubscribeOffer (SubscriptionId: {subscriptionId})");
 
             this.MarketProcessor.UnsubscribeOffer(subscriptionId);
 
