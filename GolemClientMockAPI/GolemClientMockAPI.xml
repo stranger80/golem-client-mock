@@ -978,7 +978,7 @@
             * `Expired` - not accepted nor rejected before validity period 
             </summary>
         </member>
-        <member name="M:GolemClientMockAPI.Mappers.PropertyMappers.ProcessJProperty(System.String,Newtonsoft.Json.Linq.JProperty,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:GolemClientMockAPI.Mappers.PropertyMappers.ProcessJProperty(System.String,Newtonsoft.Json.Linq.JProperty,System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken})">
             <summary>
             Recursive traversal of json structure to extract properties.
             Accumulates the collected properties in the dictionary.

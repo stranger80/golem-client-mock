@@ -9,16 +9,15 @@ namespace GolemClientMockAPI.Mappers
 {
     public class PropertyMappers
     {
-        public static string MapToJsonString(IDictionary<string, string> props)
+        public static string MapToJsonString(IDictionary<string, JToken> props)
         {
             return JsonConvert.SerializeObject(props);
         }
 
-        public static IDictionary<string, string> MapFromJsonString(string propertiesJson)
+        public static IDictionary<string, JToken> MapFromJsonString(string propertiesJson)
         {
             var deserialized = JsonConvert.DeserializeObject(propertiesJson) as JObject;
-
-            var result = new Dictionary<string, string>();
+            var result = new Dictionary<string, JToken>();
 
             foreach(var child in deserialized.Children())
             {
@@ -41,7 +40,7 @@ namespace GolemClientMockAPI.Mappers
         /// <param name="parentPath"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        protected static void ProcessJProperty(string parentPath, JProperty property, IDictionary<string, string> properties)
+        protected static void ProcessJProperty(string parentPath, JProperty property, IDictionary<string, JToken> properties)
         {
             if(property.Value is JObject)
             {
@@ -58,24 +57,8 @@ namespace GolemClientMockAPI.Mappers
             }
             else
             {
-                properties.Add(parentPath, FormatPropertyValue(property.Value));
+                properties.Add(parentPath, property.Value);
             }
         }
-
-        protected static string FormatPropertyValue(JToken value)
-        {
-            switch(value.Type)
-            {
-                case JTokenType.Null:
-                    return null;
-                case JTokenType.String:
-                    return $"\"{value.ToString()}\"";
-                case JTokenType.Array:
-                    return $"[{String.Join(',', value.Children().Select(token => FormatPropertyValue(token)))}]";
-                default:
-                    return value.ToString();
-            }
-        }
-
     }
 }
