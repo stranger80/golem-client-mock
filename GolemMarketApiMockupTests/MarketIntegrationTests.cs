@@ -3,6 +3,7 @@ using GolemClientMockAPI.Processors;
 using GolemClientMockAPI.Repository;
 using GolemMarketApiMockup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -57,7 +58,7 @@ namespace GolemMarketApiMockupTests
                 //@"(golem.com.pricing.est{[30]}<125)" +
                 @")",
                 NodeId = "RequestorA", // must be assigned from the outside
-                Properties = new Dictionary<string, string>()
+                Properties = new Dictionary<string, JToken>()
             };
 
             var demandSubscription = RequestorProcessor.SubscribeDemand(demand);
@@ -73,7 +74,7 @@ namespace GolemMarketApiMockupTests
             {
                 Constraints = "()",
                 NodeId = "ProviderA",
-                Properties = new Dictionary<string, string>()
+                Properties = new Dictionary<string, JToken>()
                 {
                     { "golem.srv.comp.container.docker.image", @"[""golemfactory/ffmpeg""]" },
                     { "golem.srv.comp.container.docker.benchmark{golemfactory/ffmpeg}", @"7"},
@@ -93,7 +94,7 @@ namespace GolemMarketApiMockupTests
             {
                 Constraints = "()",
                 NodeId = "ProviderB",
-                Properties = new Dictionary<string, string>()
+                Properties = new Dictionary<string, JToken>()
                 {
                     { "golem.srv.comp.container.docker.image", @"[""golemfactory/ffmpeg""]" },
                     { "golem.srv.comp.container.docker.benchmark{golemfactory/ffmpeg}", @"723"},
@@ -153,7 +154,7 @@ namespace GolemMarketApiMockupTests
                 //@"(golem.com.pricing.est{[30]}<125)" +
                 @")",
                 NodeId = "RequestorA", // must be assigned from the outside
-                Properties = new Dictionary<string, string>()
+                Properties = new Dictionary<string, JToken>()
             };
 
             var counterDemandProposal = RequestorProcessor.CreateDemandProposal(demandSubscription.Id, offerProposal.Id, counterDemand);
@@ -187,7 +188,7 @@ namespace GolemMarketApiMockupTests
             {
                 Constraints = "()",
                 NodeId = "ProviderB",
-                Properties = new Dictionary<string, string>()
+                Properties = new Dictionary<string, JToken>()
                 {
                     { "golem.srv.comp.container.docker.image", @"[""golemfactory/ffmpeg""]" },
                     { "golem.srv.comp.container.docker.benchmark{golemfactory/ffmpeg}", @"723"},

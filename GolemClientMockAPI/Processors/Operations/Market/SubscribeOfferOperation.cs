@@ -1,6 +1,7 @@
 ﻿using GolemClientMockAPI.Entities;
 using GolemClientMockAPI.Repository;
 using GolemMarketApiMockup;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace GolemClientMockAPI.Processors.Operations
                                         IDictionary<string, SubscriptionPipeline<DemandSubscription, MarketRequestorEvent>> requestorEventPipelines,
                                         IDictionary<string, string> demandSubscriptions,
                                         IDictionary<string, SubscriptionPipeline<OfferSubscription, MarketProviderEvent>> providerEventPipelines,
-                                        IDictionary<string, string> offerSubscriptions) 
+                                        IDictionary<string, string> offerSubscriptions)
             : base(subscriptionRepo, proposalRepo, null, requestorEventPipelines, demandSubscriptions, providerEventPipelines, offerSubscriptions)
         {
 
@@ -47,8 +48,8 @@ namespace GolemClientMockAPI.Processors.Operations
             {
                 var demand = demandSubscription.Subscription.Demand;
 
-                var matchingResult = this.MarketResolver.MatchDemandOffer(demand.Properties.Select(prop => prop.Key + ((prop.Value == null) ? "" : ("=" + prop.Value))).ToArray(), demand.Constraints,
-                                                                          offer.Properties.Select(prop => prop.Key + ((prop.Value == null) ? "" : ("=" + prop.Value))).ToArray(), offer.Constraints);
+                var matchingResult = this.MarketResolver.MatchDemandOffer(demand.Properties.Select(prop => prop.Key + ((prop.Value == null) ? "" : ("=" + JsonConvert.SerializeObject(prop.Value)))).ToArray(), demand.Constraints,
+                                                                          offer.Properties.Select(prop => prop.Key + ((prop.Value == null) ? "" : ("=" + JsonConvert.SerializeObject(prop.Value)))).ToArray(), offer.Constraints);
 
                 switch (matchingResult)
                 {

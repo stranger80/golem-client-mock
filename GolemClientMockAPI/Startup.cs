@@ -172,6 +172,9 @@ namespace GolemClientMockAPI
                 })
                 .UseDefaultFiles()
                 .UseStaticFiles()
+                .UseSpaStaticFiles();
+
+            app
                 .UseSwagger()
                 .UseSwaggerUI(c =>
                 {

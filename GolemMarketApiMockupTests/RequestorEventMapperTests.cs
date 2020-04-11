@@ -3,6 +3,7 @@ using GolemClientMockAPI.Entities;
 using GolemClientMockAPI.Mappers;
 using GolemMarketApiMockup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace GolemMarketApiMockupTests
                     {
                         NodeId = "ProviderNodeId",
                         Constraints = "()",
-                        Properties = new Dictionary<string, string>() { }
+                        Properties = new Dictionary<string, JToken>() { }
                     }
                 }
             };
